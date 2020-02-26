@@ -16,7 +16,7 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 	if ($user && password_verify($password, $user['password'])) {
 		$_SESSION['user_id'] = $user['id'];
 		echo "<p class=\"success\">Hello $username, you are logged in!</p>";
-		header('Location: /poker/join_game/');
+		header('Location: /poker/');
 	} else {
 		echo '<p class="error">Wrong username or password!</p>';
 	}
