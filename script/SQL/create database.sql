@@ -110,6 +110,18 @@ INSERT INTO `cards` (`symbol`, `rank`, `suit`) VALUES ('🃝', 'Q', '♣');
 INSERT INTO `cards` (`symbol`, `rank`, `suit`) VALUES ('🃞', 'K', '♣');
 
 
+CREATE TABLE `actions` (
+	`id`   INT NOT NULL UNIQUE AUTO_INCREMENT,
+	`name` VARCHAR(32),
+
+	PRIMARY KEY (`id`)
+);
+
+INSERT INTO `actions` (`name`) VALUES ('check');
+INSERT INTO `actions` (`name`) VALUES ('call');
+INSERT INTO `actions` (`name`) VALUES ('raise');
+INSERT INTO `actions` (`name`) VALUES ('fold');
+
 
 CREATE TABLE `users` (
 	`id`         INT          NOT NULL UNIQUE AUTO_INCREMENT,
@@ -123,32 +135,37 @@ CREATE TABLE `users` (
 );
 
 CREATE TABLE `games` (
-	`id`        INT         UNIQUE NOT NULL AUTO_INCREMENT,
-	`name`      VARCHAR(32) UNIQUE NOT NULL,
-	`card1`     INT         UNIQUE DEFAULT NULL,
-	`card2`     INT         UNIQUE DEFAULT NULL,
-	`card3`     INT         UNIQUE DEFAULT NULL,
-	`card4`     INT         UNIQUE DEFAULT NULL,
-	`card5`     INT         UNIQUE DEFAULT NULL,
-	`pot_money` INT                DEFAULT NULL,
+	`id`             INT         UNIQUE NOT NULL AUTO_INCREMENT,
+	`name`           VARCHAR(32) UNIQUE NOT NULL,
+	`current_player` INT UNIQUE DEFAULT NULL,
+	`card1`          INT         UNIQUE DEFAULT NULL,
+	`card2`          INT         UNIQUE DEFAULT NULL,
+	`card3`          INT         UNIQUE DEFAULT NULL,
+	`card4`          INT         UNIQUE DEFAULT NULL,
+	`card5`          INT         UNIQUE DEFAULT NULL,
+	`pot_money`      INT                DEFAULT NULL,
 	
 	PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `players` (
-	`id`    INT NOT NULL UNIQUE AUTO_INCREMENT,
-	`user`  INT,
-	`game`  INT NOT NULL,
-	`money` INT,
-	`card1` INT DEFAULT NULL UNIQUE,
-	`card2` INT DEFAULT NULL UNIQUE,
+	`id`          INT NOT NULL UNIQUE AUTO_INCREMENT,
+	`user`        INT,
+	`game`        INT NOT NULL,
+	`next_player` INT DEFAULT NULL,
+	`money`       INT,
+	`card1`       INT DEFAULT NULL UNIQUE,
+	`card2`       INT DEFAULT NULL UNIQUE,
+	`last_action` INT,
 	
-	PRIMARY KEY (`id`   ),
-	FOREIGN KEY (`user` ) REFERENCES `users` (`id`),
-	FOREIGN KEY (`game` ) REFERENCES `games` (`id`),
-	FOREIGN KEY (`card1`) REFERENCES `cards` (`id`),
-	FOREIGN KEY (`card2`) REFERENCES `cards` (`id`)
+	PRIMARY KEY (`id`         ),
+	FOREIGN KEY (`user`       ) REFERENCES `users`   (`id`),
+	FOREIGN KEY (`game`       ) REFERENCES `games`   (`id`),
+	FOREIGN KEY (`next_player`) REFERENCES `players` (`id`),
+	FOREIGN KEY (`card1`      ) REFERENCES `cards`   (`id`),
+	FOREIGN KEY (`card2`      ) REFERENCES `cards`   (`id`),
+	FOREIGN KEY (`last_action`) REFERENCES `actions` (`id`)
 );
 
-
+ALTER TABLE `games` ADD CONSTRAINT FOREIGN KEY (`current_player`) REFERENCES `players` (`id`);
 
