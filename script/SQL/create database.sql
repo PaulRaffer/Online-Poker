@@ -137,12 +137,14 @@ CREATE TABLE `users` (
 CREATE TABLE `games` (
 	`id`             INT         UNIQUE NOT NULL AUTO_INCREMENT,
 	`name`           VARCHAR(32) UNIQUE NOT NULL,
-	`current_player` INT UNIQUE DEFAULT NULL,
-	`card1`          INT         UNIQUE DEFAULT NULL,
-	`card2`          INT         UNIQUE DEFAULT NULL,
-	`card3`          INT         UNIQUE DEFAULT NULL,
-	`card4`          INT         UNIQUE DEFAULT NULL,
-	`card5`          INT         UNIQUE DEFAULT NULL,
+	`phase`          INT                DEFAULT NULL,
+	`dealer`         INT         UNIQUE DEFAULT NULL,
+	`current_player` INT         UNIQUE DEFAULT NULL,
+	`card1`          INT                DEFAULT NULL,
+	`card2`          INT                DEFAULT NULL,
+	`card3`          INT                DEFAULT NULL,
+	`card4`          INT                DEFAULT NULL,
+	`card5`          INT                DEFAULT NULL,
 	`pot_money`      INT                DEFAULT NULL,
 	
 	PRIMARY KEY (`id`)
@@ -167,5 +169,6 @@ CREATE TABLE `players` (
 	FOREIGN KEY (`last_action`) REFERENCES `actions` (`id`)
 );
 
+ALTER TABLE `games` ADD CONSTRAINT FOREIGN KEY (`dealer`) REFERENCES `players` (`id`);
 ALTER TABLE `games` ADD CONSTRAINT FOREIGN KEY (`current_player`) REFERENCES `players` (`id`);
 
