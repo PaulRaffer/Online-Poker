@@ -8,7 +8,7 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 	$username = $_POST['username'];
 	$password = $_POST['password'];
 	
-	$query = $connection->prepare("SELECT * FROM `users` WHERE `username`=:username");
+	$query = $db->prepare("SELECT * FROM `users` WHERE `username`=:username");
 	$query->execute([ ':username' => $username ]);
 	
 	$user = $query->fetch(PDO::FETCH_ASSOC);
@@ -25,18 +25,28 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	</head>
 
-<h2>Login</h2>
-<form method="post">
-	<table>
-		<tr>
-			<td><label>Username:</label></td>
-			<td><input type="text" name="username" pattern="[a-zA-Z0-9]+" placeholder="username" required /></td>
-		</tr>
-		<tr>
-			<td><label>Password:</label></td>
-			<td><input type="password" name="password"  placeholder="password" /></td>
-		</tr>
-	</table>
-	<input type="submit" name="login" value="Login" />
-</form>
+	<body>
+		<h2>Login</h2>
+		<form method="post">
+			<div>
+				<table>
+					<tr>
+						<td><label>Username:</label></td>
+						<td><input type="text" name="username" pattern="[a-zA-Z0-9]+" placeholder="username" required /></td>
+					</tr>
+					<tr>
+						<td><label>Password:</label></td>
+						<td><input type="password" name="password"  placeholder="password" /></td>
+					</tr>
+				</table>
+				<input type="submit" name="login" value="Login" />
+			</div>
+			<div><a href="../register">Register</a></div>
+		</form>
+	</body>
+</html>

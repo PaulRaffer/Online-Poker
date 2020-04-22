@@ -1,5 +1,6 @@
-CREATE DATABASE `poker`;
-USE             `poker`;
+DROP   DATABASE IF EXISTS `poker`;
+CREATE DATABASE           `poker`;
+USE                       `poker`;
 
 
 
@@ -117,7 +118,6 @@ CREATE TABLE `actions` (
 	PRIMARY KEY (`id`)
 );
 
-INSERT INTO `actions` (`name`) VALUES ('check');
 INSERT INTO `actions` (`name`) VALUES ('call');
 INSERT INTO `actions` (`name`) VALUES ('raise');
 INSERT INTO `actions` (`name`) VALUES ('fold');
@@ -135,17 +135,22 @@ CREATE TABLE `users` (
 );
 
 CREATE TABLE `games` (
-	`id`             INT         UNIQUE NOT NULL AUTO_INCREMENT,
-	`name`           VARCHAR(32) UNIQUE NOT NULL,
-	`phase`          INT                DEFAULT NULL,
-	`dealer`         INT         UNIQUE DEFAULT NULL,
-	`current_player` INT         UNIQUE DEFAULT NULL,
-	`card1`          INT                DEFAULT NULL,
-	`card2`          INT                DEFAULT NULL,
-	`card3`          INT                DEFAULT NULL,
-	`card4`          INT                DEFAULT NULL,
-	`card5`          INT                DEFAULT NULL,
-	`pot_money`      INT                DEFAULT NULL,
+	`id`                 INT         UNIQUE NOT NULL AUTO_INCREMENT,
+	`name`               VARCHAR(32) UNIQUE NOT NULL,
+	`small_blind_money`  INT                DEFAULT 25,
+	`big_blind_money`    INT                DEFAULT 50,
+	`phase`              INT                DEFAULT NULL,
+	`dealer`             INT         UNIQUE DEFAULT NULL,
+	`current_player`     INT         UNIQUE DEFAULT NULL,
+	`card1`              INT                DEFAULT NULL,
+	`card2`              INT                DEFAULT NULL,
+	`card3`              INT                DEFAULT NULL,
+	`card4`              INT                DEFAULT NULL,
+	`card5`              INT                DEFAULT NULL,
+	`pot_money`          INT                DEFAULT NULL,
+	`highest_bet`        INT                DEFAULT NULL,
+	`highest_bet_player` INT         UNIQUE DEFAULT NULL,
+	`highest_raise`      INT                DEFAULT NULL,
 	
 	PRIMARY KEY (`id`)
 );
@@ -155,10 +160,11 @@ CREATE TABLE `players` (
 	`user`        INT,
 	`game`        INT NOT NULL,
 	`next_player` INT DEFAULT NULL,
-	`money`       INT,
-	`card1`       INT DEFAULT NULL UNIQUE,
-	`card2`       INT DEFAULT NULL UNIQUE,
-	`last_action` INT,
+	`money`       INT DEFAULT 1000,
+	`card1`       INT DEFAULT NULL,
+	`card2`       INT DEFAULT NULL,
+	`last_action` INT DEFAULT NULL,
+	`bet`         INT,
 	
 	PRIMARY KEY (`id`         ),
 	FOREIGN KEY (`user`       ) REFERENCES `users`   (`id`),
@@ -171,4 +177,4 @@ CREATE TABLE `players` (
 
 ALTER TABLE `games` ADD CONSTRAINT FOREIGN KEY (`dealer`) REFERENCES `players` (`id`);
 ALTER TABLE `games` ADD CONSTRAINT FOREIGN KEY (`current_player`) REFERENCES `players` (`id`);
-
+ALTER TABLE `games` ADD CONSTRAINT FOREIGN KEY (`highest_bet_player`) REFERENCES `players` (`id`);

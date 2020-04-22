@@ -6,7 +6,7 @@ define('HOST', 'localhost');
 define('DATABASE', 'poker');
 
 try {
-	$connection = new PDO("mysql:host=".HOST.";dbname=".DATABASE, USER, PASSWORD);
+	$db = new PDO("mysql:host=".HOST.";dbname=".DATABASE, USER, PASSWORD);
 } catch (PDOException $e) {
-	die("Error: " . $e->getMessage());
+	die("Error: ".$e->getMessage());
 }
