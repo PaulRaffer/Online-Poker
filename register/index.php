@@ -8,13 +8,13 @@ if (isset($_POST['register']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 	$username = $_POST['username'];
 	$password_hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
 	
-	$query = $connection->prepare("SELECT * FROM `users` WHERE `username`=:username");
+	$query = $db->prepare("SELECT * FROM `users` WHERE `username`=:username");
 	$query->execute([ ':username' => $username ]);
 	
 	if ($query->rowCount() > 0) {
 		echo "<p class=\"error\">Username '$username' already existes!</p>";
 	} elseif ($query->rowCount() == 0) {
-		$query = $connection->prepare("INSERT INTO `users` (`username`, `password`) VALUES (:username, :password)");
+		$query = $db->prepare("INSERT INTO `users` (`username`, `password`) VALUES (:username, :password)");
 		$result = $query->execute([
 			':username' => $username,
 			':password' => $password_hash
@@ -32,18 +32,28 @@ if (isset($_POST['register']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	</head>
 
-<h2>Register</h2>
-<form method="post">
-	<table>
-		<tr>
-			<td><label>Username:</label></td>
-			<td><input type="text" name="username" pattern="[a-zA-Z0-9]+" placeholder="username" required /></td>
-		</tr>
-		<tr>
-			<td><label>Password:</label></td>
-			<td><input type="password" name="password"  placeholder="password" /></td>
-		</tr>
-	</table>
-	<input type="submit" name="register" value="Register" />
-</form>
+	<body>
+		<h2>Register</h2>
+		<form method="post">
+			<div>
+				<table>
+					<tr>
+						<td><label>Username:</label></td>
+						<td><input type="text" name="username" pattern="[a-zA-Z0-9]+" placeholder="username" required /></td>
+					</tr>
+					<tr>
+						<td><label>Password:</label></td>
+						<td><input type="password" name="password"  placeholder="password" /></td>
+					</tr>
+				</table>
+				<input type="submit" name="register" value="Register" />
+			</div>
+			<div><a href="../login">Login</a></div>
+		</form>
+	</body>
+</html>
