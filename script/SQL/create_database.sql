@@ -156,14 +156,15 @@ CREATE TABLE `games` (
 );
 
 CREATE TABLE `players` (
-	`id`          INT NOT NULL UNIQUE AUTO_INCREMENT,
+	`id`          INT     NOT NULL UNIQUE AUTO_INCREMENT,
 	`user`        INT,
-	`game`        INT NOT NULL,
-	`next_player` INT DEFAULT NULL,
-	`money`       INT DEFAULT 1000,
-	`card1`       INT DEFAULT NULL,
-	`card2`       INT DEFAULT NULL,
-	`last_action` INT DEFAULT NULL,
+	`game`        INT     NOT NULL,
+	`next_player` INT     DEFAULT NULL,
+	`money`       INT     DEFAULT 1000,
+	`card1`       INT     DEFAULT NULL,
+	`card2`       INT     DEFAULT NULL,
+	`is_winner`   BOOLEAN DEFAULT FALSE,
+	`last_action` INT     DEFAULT NULL,
 	`bet`         INT,
 	
 	PRIMARY KEY (`id`         ),
