@@ -33,7 +33,7 @@ function set_game($db, $game) { // Spiel auf datenbank schreiben
 	]);
 }
 
-function print_game() { // Spiel ausgeben?>
+function print_game() { ?> // Spiel ausgeben
 	<span id="players"></span>
 	<div class="you">
 		<form method="post">
