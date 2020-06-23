@@ -63,13 +63,14 @@ define("hand_num_to_str", [
 
 
 
-function poker_hand($cards) {
+function poker_hand($cards) { // ermittelt die Stärke einer Pokerhand
 	foreach (['♠', '♥', '♦', '♣'] as $s)
-		$suit_count[$s] = 0;
+		$suit_count[$s] = 0; // wie oft kommt jede Farbe vor?
 
 	for ($r = 2; $r <= 14; $r += 1)
-		$rank_count[$r] = 0;
+		$rank_count[$r] = 0; // Wie oft kommt jeder Wert vor?
 
+	// Welche Frabe kommt am öftesten vor?:
 	$max_suit_count = 0;
 	foreach ($cards as $c) {
 		$suit_count[$c['suit']] += 1;
@@ -80,6 +81,7 @@ function poker_hand($cards) {
 		$rank_count[rank_char_to_num[$c['rank']]] += 1;
 	}
 	
+	// Welcher Wert kommt am öftesten vor?:
 	$max_rank[0] = 0;
 	for ($i = 1; $i <= 5; $i += 1) {
 		$max_rank[$i] = 0;
@@ -127,10 +129,10 @@ function poker_hand($cards) {
 	}
 	$straight_flush_max_rank = max($straight_flush_rank);
 	if ($straight_flush_max_rank)
-		return [straight_flush, $straight_flush_max_rank];
+		return [straight_flush, $straight_flush_max_rank/*Wert der höchsten Karte im Straight Flush*/];
 	
 	if ($max_rank_count[1] == 4)
-		return [four_of_a_kind, $max_rank[1], $max_rank[2]];
+		return [four_of_a_kind, $max_rank[1]/*Wert des Vierlings*/, $max_rank[2]];
 
 	if ($max_suit_count >= 5) {
 		$flush_ranks = [];
@@ -138,7 +140,7 @@ function poker_hand($cards) {
 			if ($c['suit'] == $max_suit)
 				array_push($flush_ranks, rank_char_to_num[$c['rank']]);
 		rsort($flush_ranks);
-		return [flush, $flush_ranks[0], $flush_ranks[1], $flush_ranks[2], $flush_ranks[3], $flush_ranks[4]];
+		return [flush, $flush_ranks[0]/*Wert der höchsten Karte im Flush*/, $flush_ranks[1]/*...*/, $flush_ranks[2], $flush_ranks[3], $flush_ranks[4]];
 	}
 
 	$straight_count = ($rank_count['14'] ? 1 : 0);
@@ -154,19 +156,21 @@ function poker_hand($cards) {
 		}
 	}
 	if ($straight_rank)
-		return [straight, $straight_rank];
+		return [straight, $straight_rank/*Wert der höchsten Karte in der Straße*/];
 
-	if ($max_rank_count[1] == 3 && $max_rank_count[2] >= 2)
-		return [full_house, $max_rank[1], $max_rank[2]];
+	if ($max_rank_count[1] == 3 && $max_rank_count[2] >= 2) // Wert der am öftesten vorkommt kommt 3 Mal vor UND Wert der am zweitöftesten vorkommt kommt 2 Mal vor:
+		return [full_house, $max_rank[1]/*Wert des Drillings*/, $max_rank[2]/*Wert des Paares*/];
 
-	if ($max_rank_count[1] == 3)
-		return [three_of_a_kind, $max_rank[1], $max_rank[2], $max_rank[3]];
+	if ($max_rank_count[1] == 3) // Wert der am öftesten vorkommt kommt 3 Mal vor:
+		return [three_of_a_kind, $max_rank[1]/*Wert des Drillings*/, $max_rank[2], $max_rank[3]];
 
-	if ($max_rank_count[1] == 2) {
+	
+	if ($max_rank_count[1] == 2) { // Wert der am öftesten vorkommt kommt 2 Mal vor:
 		if ($max_rank_count[2] == 2)
-			return [two_pair, $max_rank[1], $max_rank[2], $max_rank[3]];
-		return [one_pair, $max_rank[1], $max_rank[2], $max_rank[3], $max_rank[4]];
+			return [two_pair, $max_rank[1]/*Wert des 1. Paares*/, $max_rank[2]/*Wert des 2. Paares*/, $max_rank[3]];
+		return [one_pair, $max_rank[1]/*Wert des Paares*/, $max_rank[2], $max_rank[3], $max_rank[4]];
 	}
 
+	// Spierler hat nichts => höchste bis fünfthöchste Karte werden zurückgegeben:
 	return [high_card, $max_rank[1], $max_rank[2], $max_rank[3], $max_rank[4], $max_rank[5]];
 }

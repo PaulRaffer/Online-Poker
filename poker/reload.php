@@ -137,5 +137,5 @@ while ($pu = $query_players_users->fetch(PDO::FETCH_ASSOC)) {
 		'<div class="player_current_player"><span>'.($is_current_player ? ($is_you ? 'your turn' : 'thinking...') : '').'</span></div>'.
 		'</div></div>';
 }
-echo "retry: 50\ndata: $str\n\n";
+echo "retry: 50\ndata: $str\n\n"; // Wird alle 50ms aktualisiert
 flush();
