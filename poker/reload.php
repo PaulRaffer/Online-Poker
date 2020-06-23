@@ -27,9 +27,9 @@ $query_player->execute([
 $player = $query_player->fetch(PDO::FETCH_ASSOC);
 $player_id = $player['id'];
 
-$query_players_users = $db->prepare("SELECT `players`.`id`, `username`, `money`, `bet`, `card1`, `card2`, `last_action` FROM `players` JOIN `users` ON `players`.`user` = `users`.`id` WHERE `players`.`game`=:game_id ORDER BY `players`.`id`");
+$query_players_users = $db->prepare("SELECT `players`.`id`, `username`, `money`, `bet`, `card1`, `card2`, `is_winner`, `last_action` FROM `players` JOIN `users` ON `players`.`user` = `users`.`id` WHERE `players`.`game`=:game_id ORDER BY `players`.`id`");
 $query_players_users->execute([ ':game_id' => $game_id, ]);
-		
+
 $query_game = $db->prepare("SELECT * FROM `games` WHERE `id`=:game_id");
 $query_game->execute([ ':game_id' => $game_id, ]);
 $game = $query_game->fetch();
@@ -108,12 +108,14 @@ while ($pu = $query_players_users->fetch(PDO::FETCH_ASSOC)) {
 	$is_you = $pu['id'] == $player_id;
 	$is_dealer = $pu['id'] == $game['dealer'];
 	$is_current_player = $pu['id'] == $game['current_player'] && $game['phase'] != showdown+1;
+	$is_winner = $pu['is_winner'];
 
 	$str .=
 		'<div class="player'.
 		($is_you ? ' you' : '').
 		($is_dealer ? ' dealer' : '').
 		($is_current_player ? ' current_player' : '').
+		($is_winner ? ' winner' : '').
 		($pu['last_action'] == fold ? ' fold' : '').
 		'"><div class="player_info"><table>'.
 		'<tr><td>Username:</td><td>'.$pu['username'].'</td></tr>'.
@@ -135,6 +137,7 @@ while ($pu = $query_players_users->fetch(PDO::FETCH_ASSOC)) {
 		'<div class="player_dealer_button"><span>'.($is_dealer ? 'Ⓓ' : '').'</span></div>'.
 		'<div class="player_you"><span>'.($is_you ? 'you' : '').'</span></div>'.
 		'<div class="player_current_player"><span>'.($is_current_player ? ($is_you ? 'your turn' : 'thinking...') : '').'</span></div>'.
+		'<div class="player_winner"><span>'.($is_winner ? 'winner!' : '').'</span></div>'.
 		'</div></div>';
 }
 echo "retry: 50\ndata: $str\n\n"; // Wird alle 50ms aktualisiert
