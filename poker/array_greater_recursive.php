@@ -7,5 +7,6 @@ function array_greater_recursive($arr1, $arr2, $limit, $i = 0) {
 		return 1;
 	else if ($arr1[$i] == $arr2[$i])
 		return array_greater_recursive($arr1, $arr2, $limit, $i+1);
-	return 0;
+	else
+		return -1;
 }
