@@ -83,6 +83,7 @@
 .dealer { border: 3px solid blue; }
 .you { border: 3px solid red; }
 .current_player { background-color: lightgreen; }
+.winner { background-color: yellow; }
 
 .fold { opacity: 0.4; }
 
