@@ -231,7 +231,9 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 						$winner['money'] += $game['pot_money']; // Gewinner erhält Pot
 						$you['bet'] = 0; // Gebot zurücksetzen
 						$game['pot_money'] = 0; // Pot leeren
+
 						$game['phase'] = 0; // Neue Runde
+						$game['dealer'] = $dealer['next_player']; // Dealer-Button wird weitergegeben
 
 						$query_set_winner_money = $db->prepare("UPDATE `players` SET `money`=:winner_money WHERE `id`=:winner_id");
 						$query_set_winner_money->execute([ // Auf db schreiben
@@ -247,7 +249,7 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 	}
 
 	
-	// deine daten in db aktualisieren:
+	// Deine Daten in DB aktualisieren:
 	$query_set_you = $db->prepare('UPDATE `players` SET `money`=:you_money, `bet`=:you_bet, `last_action`=:last_action WHERE `id`=:you_id');
 	$query_set_you->execute([
 		':you_id' => $you['id'],
@@ -386,8 +388,8 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 				]);
 
 				// Gewinner ermitteln:
-				$winner_id = -1;
-				$winner_rank = -1;
+				$winner_ids = [];
+				$winner_rank = [high_card, 0, 0, 0, 0, 0];
 				while ($p = $query_players_in_game->fetch(PDO::FETCH_ASSOC)) {
 
 					$query_card = $db->prepare("SELECT `rank`, `suit` FROM `cards` WHERE `id`=:player_card1_id OR `id`=:player_card2_id OR `id`=:game_card1_id OR `id`=:game_card2_id OR `id`=:game_card3_id OR `id`=:game_card4_id OR `id`=:game_card5_id");
@@ -404,32 +406,31 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 					while ($c = $query_card->fetch(PDO::FETCH_ASSOC))
 						array_push($cards, $c);
 				
-					$rank = poker_hand($cards); // Beste kartenkombination des Spielers herausfinden ...
+					$rank = poker_hand($cards); // Beste Kartenkombination des Spielers herausfinden ...
 
-					if (array_greater_recursive($rank, $winner_rank, count($rank)) == 1) { // ... und nachschauen ob sie besser ist als die vom bisher führenden
+					$ishandbetter = array_greater_recursive($rank, $winner_rank, count($rank));
+					if ($ishandbetter == 1) { // ... und nachschauen ob sie besser ist als die vom bisher führenden
 						$winner_rank = $rank; // bisher bester aktualisieren
-						$winner_id = $p['id'];
+						$winner_ids = [$p['id']];
+					}
+					else if ($ishandbetter == 0) { // ... und nachschauen ob sie besser ist als die vom bisher führenden
+						array_push($winner_ids, $p['id']);
 					}
 				}
 
 
-				$query_get_winner = $db->prepare("SELECT `money` FROM `players` WHERE `id`=:winner_id");
-				$query_get_winner->execute([ ':winner_id' => $winner_id, ]);
-				$winner = $query_get_winner->fetch(PDO::FETCH_ASSOC);
 
-				$winner['money'] += $game['pot_money']; // Gewinner bekommt Pot
+				// Gewinner bekommt den Pot:
+				$query_set_winner_money = $db->prepare("UPDATE `players` SET `money`=`money`+:pot_money WHERE `id`=:winner_id");
+				$query_set_winner_money->execute([
+					':winner_id' => $winner_ids[0],
+					':pot_money' => $game['pot_money'] / count($winner_ids),
+				]);
+
 				$you['bet'] = 0; // Gebot zurücksetzen
 				$game['pot_money'] = 0; // Pot zurücksetzen
 
-				// set Gewinner in db:
-				$query_set_winner_money = $db->prepare("UPDATE `players` SET `money`=:winner_money WHERE `id`=:winner_id");
-				$query_set_winner_money->execute([
-					':winner_id' => $winner_id,
-					':winner_money' => $winner['money'],
-				]);
-
-
-				echo '<script type="text/javascript" src="timer.js"></script>'; // start timer to next round
+				echo '<script type="text/javascript" src="timer.js"></script>'; // 10sek warten
 				++$game['phase'];
 				$new_phase = true;
 			}
