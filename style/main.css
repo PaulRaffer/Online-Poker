@@ -3,6 +3,12 @@
     border: 3px solid goldenrod;
     padding: 0.5em;
 }
+@media only screen and (max-width: 420px) {
+    .game table {
+        display: none;
+    }
+}
+
 .player {
     border: 3px solid black;
     margin: 0.8em;
@@ -14,7 +20,6 @@
 @media only screen and (max-width: 420px) {
     .game tr>td:nth-child(1), .player tr>td:nth-child(1) {
         display: none;
-        background-color: red;
     }
     .rank { display: none; }
 }
@@ -57,7 +62,7 @@
 .player_dealer_button {
     flex-grow: 1;
     /*border: 1px solid orange;*/
-    height: 33%;
+    height: 25%;
     font-size: 1.5em;
     color: blue;
     text-align: right;
@@ -67,17 +72,24 @@
 }
 
 .player_current_player {
-    height: 33%;
+    height: 25%;
     font-size: 1.2em;
     text-align: right;
     color: green;
 }
 
 .player_you {
-    height: 33%;
+    height: 25%;
     font-size: 1.5em;
     text-align: right;
     color: red;
+}
+
+.player_winner {
+    height: 25%;
+    font-size: 1.4em;
+    text-align: right;
+    color:goldenrod;
 }
 
 .dealer { border: 3px solid blue; }
