@@ -33,7 +33,7 @@ function set_game($db, $game) { // Spiel auf datenbank schreiben
 	]);
 }
 
-function print_game() { // Spiel ausgeben?>
+function print_game() { // Spiel ausgeben ?>
 	<span id="players"></span>
 	<div class="you">
 		<form method="post">
@@ -44,6 +44,7 @@ function print_game() { // Spiel ausgeben?>
 			</table>
 			<input type="submit" name="set_action" />
 		</form>
+		If you find a bug, please create an <a href="https://github.com/PaulRaffer/Online-Poker/issues" target="_blank">issue</a> on <a href="https://github.com/PaulRaffer/Online-Poker" target="_blank">GitHub</a>!
 	</div>
 <?php }
 
