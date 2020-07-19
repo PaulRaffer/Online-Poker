@@ -267,98 +267,91 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 	$old_phase = $game['phase'];
 
 	switch ($game['phase']) {
-		case phase0:
-			$game['phase'] = dealing;
-		break;
-
 		case dealing:
-			if ($you['id'] == $game['dealer']) {
+			// Gebote auf 0$ zurücksetzen / noch kein Gewinner:
+			$query_reset_bets = $db->prepare('UPDATE `players` SET `last_action`=:start_action, `bet`=0, `is_winner`=FALSE  WHERE `game`=:game_id');
+			$query_reset_bets->execute([
+				':game_id' => $game['id'],
+				':start_action' => call,
+			]);
 
-				// Gebote auf 0$ zurücksetzen / noch kein Gewinner:
-				$query_reset_bets = $db->prepare('UPDATE `players` SET `last_action`=:start_action, `bet`=0, `is_winner`=FALSE  WHERE `game`=:game_id');
-				$query_reset_bets->execute([
-					':game_id' => $game['id'],
-					':start_action' => call,
+			// Wer sind die Blinds?:
+			// small blind:
+			$small_blind_player_id = $dealer['next_player'];
+			$query_small_blind_player = $db->prepare('SELECT `next_player`, `money`, `bet` FROM `players` WHERE `id`=:small_blind_id');
+			$query_small_blind_player->execute([
+				':small_blind_id' => $small_blind_player_id,
+			]);
+			$small_blind_player = $query_small_blind_player->fetch();
+
+			// big blind:
+			$big_blind_player_id = $small_blind_player['next_player'];
+			$query_big_blind_player = $db->prepare('SELECT `next_player`, `money`, `bet` FROM `players` WHERE `id`=:big_blind_id');
+			$query_big_blind_player->execute([
+				':big_blind_id' => $big_blind_player_id,
+			]);
+			$big_blind_player = $query_big_blind_player->fetch();
+
+			if (debug)
+			echo
+				'<table>'.
+				'<tr><td>DEALER:</td><td>'.$game['dealer'].'</td></tr>'.
+				'<tr><td>SMALL BLIND:</td><td>'.$small_blind_player_id.'</td></tr>'.
+				'<tr><td>BIG BLIND:</td><td>'.$big_blind_player_id.'</td></tr>'.
+				'<tr><td>START PLAYER:</td><td>'.$big_blind_player['next_player'].'</td></tr>'.
+				'</table>';
+
+
+			// Karten erstellen und mischen:
+			$cards = range(1, 52);
+			shuffle($cards);
+			if (debug) foreach ($cards as $c) { echo "$c "; }
+				
+			$card_top = -1;
+			// Karten austeilen:
+			while ($p = $query_players->fetch()) {
+				$query_cards = $db->prepare("UPDATE `players` SET `card1`=:card1, `card2`=:card2 WHERE `id`=:player_id");
+				$query_cards->execute([
+					':player_id' => $p['id'],
+					':card1' => $cards[$card_top+=1],
+					':card2' => $cards[$card_top+=1],
 				]);
-
-				// Wer sind die Blinds?:
-				// small blind:
-				$small_blind_player_id = $dealer['next_player'];
-				$query_small_blind_player = $db->prepare('SELECT `next_player`, `money`, `bet` FROM `players` WHERE `id`=:small_blind_id');
-				$query_small_blind_player->execute([
-					':small_blind_id' => $small_blind_player_id,
-				]);
-				$small_blind_player = $query_small_blind_player->fetch();
-
-				// big blind:
-				$big_blind_player_id = $small_blind_player['next_player'];
-				$query_big_blind_player = $db->prepare('SELECT `next_player`, `money`, `bet` FROM `players` WHERE `id`=:big_blind_id');
-				$query_big_blind_player->execute([
-					':big_blind_id' => $big_blind_player_id,
-				]);
-				$big_blind_player = $query_big_blind_player->fetch();
-
-				if (debug)
-				echo
-					'<table>'.
-					'<tr><td>DEALER:</td><td>'.$game['dealer'].'</td></tr>'.
-					'<tr><td>SMALL BLIND:</td><td>'.$small_blind_player_id.'</td></tr>'.
-					'<tr><td>BIG BLIND:</td><td>'.$big_blind_player_id.'</td></tr>'.
-					'<tr><td>START PLAYER:</td><td>'.$big_blind_player['next_player'].'</td></tr>'.
-					'</table>';
-
-
-				// Karten erstellen und mischen:
-				$cards = range(1, 52);
-				shuffle($cards);
-				if (debug) foreach ($cards as $c) { echo "$c "; }
-					
-				$card_top = -1;
-				// Karten austeilen:
-				while ($p = $query_players->fetch()) {
-					$query_cards = $db->prepare("UPDATE `players` SET `card1`=:card1, `card2`=:card2 WHERE `id`=:player_id");
-					$query_cards->execute([
-						':player_id' => $p['id'],
-						':card1' => $cards[$card_top+=1],
-						':card2' => $cards[$card_top+=1],
-					]);
-				}
-
-				// Karten auf den tisch legen:
-				for ($c = 1; $c <= 5; ++$c)
-					$game["card$c"] = $cards[$card_top+=1];
-
-				// Pot leeren
-				$game['pot_money'] = 0;
-
-
-				bet($game, $small_blind_player, $game['small_blind_money']); // Small Blind abziehen
-				bet($game, $big_blind_player, $game['big_blind_money']); // Big Blind abziehen
-
-				// Small Blind in db aktualisieren:
-				$query_set_small_blind_player_money = $db->prepare("UPDATE `players` SET `money`=:small_blind_player_money, `bet`=:small_blind_player_bet WHERE `id`=:small_blind_player_id");
-				$query_set_small_blind_player_money->execute([
-					':small_blind_player_id' => $small_blind_player_id,
-					':small_blind_player_money' => $small_blind_player['money'],
-					':small_blind_player_bet' => $small_blind_player['bet'],
-				]);
-				// Big Blind in db aktualisieren:
-				$query_set_big_blind_player_money = $db->prepare("UPDATE `players` SET `money`=:big_blind_player_money, `bet`=:big_blind_player_bet WHERE `id`=:big_blind_player_id");
-				$query_set_big_blind_player_money->execute([
-					':big_blind_player_id' => $big_blind_player_id,
-					':big_blind_player_money' => $big_blind_player['money'],
-					':big_blind_player_bet' => $big_blind_player['bet'],
-				]);
-
-				// Höchstes Gebot = Big Blind:
-				$game['highest_bet'] = $game['big_blind_money'];
-				$game['highest_bet_player'] = $big_blind_player_id;
-				$game['highest_raise'] = $game['big_blind_money'];
-
-				$game['current_player'] = $big_blind_player['next_player']; // Spieler links vom big blind beginnt die Runde
-
-				++$game['phase']; // nächste Phase
 			}
+
+			// Karten auf den tisch legen:
+			for ($c = 1; $c <= 5; ++$c)
+				$game["card$c"] = $cards[$card_top+=1];
+
+			// Pot leeren
+			$game['pot_money'] = 0;
+
+
+			bet($game, $small_blind_player, $game['small_blind_money']); // Small Blind abziehen
+			bet($game, $big_blind_player, $game['big_blind_money']); // Big Blind abziehen
+
+			// Small Blind in db aktualisieren:
+			$query_set_small_blind_player_money = $db->prepare("UPDATE `players` SET `money`=:small_blind_player_money, `bet`=:small_blind_player_bet WHERE `id`=:small_blind_player_id");
+			$query_set_small_blind_player_money->execute([
+				':small_blind_player_id' => $small_blind_player_id,
+				':small_blind_player_money' => $small_blind_player['money'],
+				':small_blind_player_bet' => $small_blind_player['bet'],
+			]);
+			// Big Blind in db aktualisieren:
+			$query_set_big_blind_player_money = $db->prepare("UPDATE `players` SET `money`=:big_blind_player_money, `bet`=:big_blind_player_bet WHERE `id`=:big_blind_player_id");
+			$query_set_big_blind_player_money->execute([
+				':big_blind_player_id' => $big_blind_player_id,
+				':big_blind_player_money' => $big_blind_player['money'],
+				':big_blind_player_bet' => $big_blind_player['bet'],
+			]);
+
+			// Höchstes Gebot = Big Blind:
+			$game['highest_bet'] = $game['big_blind_money'];
+			$game['highest_bet_player'] = $big_blind_player_id;
+			$game['highest_raise'] = $game['big_blind_money'];
+
+			$game['current_player'] = $big_blind_player['next_player']; // Spieler links vom big blind beginnt die Runde
+
+			++$game['phase']; // nächste Phase
 		break;
 
 		case preflop:
@@ -438,11 +431,11 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 				$new_phase = true;
 			}
 		break;
+	}
 
-		case showdown+1:
-			$game['phase'] = dealing; // wieder von vorne
-			$game['dealer'] = $dealer['next_player']; // Dealer-Button wird weitergegeben
-		break;
+	if ($game['phase'] == showdown+1) {
+		$game['phase'] = dealing; // wieder von vorne
+		$game['dealer'] = $dealer['next_player']; // Dealer-Button wird weitergegeben
 	}
 
 	if (!$new_phase && $old_phase != dealing && $you['id'] == $game['current_player'] && $valid_action)

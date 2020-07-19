@@ -130,6 +130,7 @@ while ($pu = $query_players_users->fetch(PDO::FETCH_ASSOC)) {
 		'</table></div><div class="player_cards">'.
 		($pu['id'] == $player_id && $game['phase'] >= preflop
 		|| $game['phase'] >= showdown && $pu['last_action'] != fold
+		|| $game['phase'] == dealing
 		? '<span class="'.$player_cards[0]['suit'].'">'.$player_cards[0]['symbol'].'</span>'.
 		  '<span class="'.$player_cards[1]['suit'].'">'.$player_cards[1]['symbol'].'</span>'
 		: '<span>🂠</span><span>🂠</span>').
