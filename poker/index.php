@@ -160,7 +160,6 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 	$query_players->execute([ ':game_id' => $game['id'], ]);
 	
 	if (!$you) {                                                                    // WENN MAN NOCH NICHT IM SPIEL IST:
-		
 		if ($query_players->rowCount() == 0) {                                      // WENN NOCH KEINE SPIELER IM SPIEL SIND:
 			add_player($db, $user_id, $game['id']);                                 //  SPIELER HINZUFÜGEN
 			$game['dealer'] = $db->query('SELECT LAST_INSERT_ID()')->fetchColumn(); // ERSTER SPIELER IST DEALER
@@ -180,6 +179,7 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 				':game_id' => $game['id'],
 			]);
 		}
+		$you = get_you($db, $user_id, $game['id']);
 	}
 	
 	$dealer = get_dealer($db, $game); // Dealer herausfinden
