@@ -33,16 +33,20 @@ function set_game($db, $game) { // Spiel auf datenbank schreiben
 	]);
 }
 
-function print_game() { // Spiel ausgeben ?>
+function print_game($you, $game) { // Spiel ausgeben ?>
 	<span id="players"></span>
 	<div class="you">
 		<form method="post">
-			<table>
-				<tr><td>Check/Call:</td><td><input type="radio" name="action" value="1" checked /><td></td></td>
-				<tr><td>Raise:</td><td><input type="radio" name="action" value="2" id="raise_radio" /><td><input type="number" onfocus="raise_func()" name="raise_money" class="money" /><span class="money">$</span></td></td>
-				<tr><td>Fold:</td><td><input type="radio" name="action" value="3" /><td></td></td>
-			</table>
-			<input type="submit" name="set_action" />
+			<?php if ($you['id'] == $game['dealer'] && $game['phase'] == before_start) { ?>
+				<input type="submit" value="START GAME" name="start_game" />
+			<?php } else { ?>
+				<table>
+					<tr><td>Check/Call:</td><td><input type="radio" name="action" value="1" checked /><td></td></td>
+					<tr><td>Raise:</td><td><input type="radio" name="action" value="2" id="raise_radio" /><td><input type="number" onfocus="raise_func()" name="raise_money" class="money" /><span class="money">$</span></td></td>
+					<tr><td>Fold:</td><td><input type="radio" name="action" value="3" /><td></td></td>
+				</table>
+				<input type="submit" name="set_action" />
+			<?php } ?>
 		</form>
 		If you find a bug, please create an <a href="https://github.com/PaulRaffer/Online-Poker/issues" target="_blank">issue</a> on <a href="https://github.com/PaulRaffer/Online-Poker" target="_blank">GitHub</a>!
 	</div>
@@ -186,7 +190,9 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 
 	$raised = false;
 	$valid_action = false;
-	if (isset($_POST['set_action'])) { // Action-Button geklickt
+	if (isset($_POST['start_game'])) {
+		$game['phase'] = dealing;
+	} else if (isset($_POST['set_action'])) { // Action-Button geklickt
 		if ($you['id'] != $game['current_player'] && $game['phase'] != showdown + 1) // nicht dran:
 			echo '<span class="error">Du bist nicht dran!</span><br />';
 		else if (!isset($_POST['action'])) // keine Aktion ausgewählt:
@@ -267,6 +273,88 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 	$old_phase = $game['phase'];
 
 	switch ($game['phase']) {
+		case preflop:
+			if (($you['id'] == $game['current_player'] && get_next_player($db, $you)['id'] == $game['highest_bet_player'] && $game['highest_bet'] != $game['big_blind_money'] || !$raised && $game['current_player'] == $game['highest_bet_player']) && $valid_action) {
+			// (Du bist dran UND dein nächster Spiler hat am meisten Geboten UND das höchste Gebot ist nicht der big blind) ODER (es wurde nicht erhöht UND der Spieler der dran ist hat am meisten Geboten) UND die Aktion war gültig
+				
+				$game['current_player'] = get_next_player($db, $dealer)['id']; // Spieler links vom Dealer ist dran
+				$game['highest_bet_player'] = $game['current_player']; // Damit zumindest jeder einmal dran kommt
+				++$game['phase']; // nächste Phase
+				$new_phase = true;
+			}
+		break;
+
+		case flop:
+		case turn:
+		case river:
+			if ($you['id'] == $game['current_player'] && get_next_player($db, $you)['id'] == $game['highest_bet_player'] && $valid_action) {
+				$game['current_player'] = get_next_player($db, $dealer)['id'];
+				$game['highest_bet_player'] = $game['current_player'];
+				++$game['phase'];
+				$new_phase = true;
+			}
+
+			if ($game['phase'] == showdown) {
+				$query_players_in_game = $db->prepare("SELECT `id`, `card1`, `card2` FROM `players` WHERE `game`=:game_id AND NOT `last_action`=:fold");
+				$query_players_in_game->execute([
+					':game_id' => $game['id'],
+					':fold' => fold,
+				]);
+
+				// Gewinner ermitteln:
+				$winner_ids = [];
+				$winner_rank = [0, 0, 0, 0, 0, 0];
+				while ($p = $query_players_in_game->fetch(PDO::FETCH_ASSOC)) {
+
+					$query_card = $db->prepare("SELECT `rank`, `suit` FROM `cards` WHERE `id`=:player_card1_id OR `id`=:player_card2_id OR `id`=:game_card1_id OR `id`=:game_card2_id OR `id`=:game_card3_id OR `id`=:game_card4_id OR `id`=:game_card5_id");
+					$query_card->execute([
+						":player_card1_id" => $p['card1'],
+						":player_card2_id" => $p['card2'],
+						":game_card1_id" => $game['card1'],
+						":game_card2_id" => $game['card2'],
+						":game_card3_id" => $game['card3'],
+						":game_card4_id" => $game['card4'],
+						":game_card5_id" => $game['card5'],
+					]);
+					$cards = [];
+					while ($c = $query_card->fetch(PDO::FETCH_ASSOC))
+						array_push($cards, $c);
+				
+					$rank = poker_hand($cards); // Beste kartenkombination des Spielers herausfinden ...
+					$cmp_rank = array_greater_recursive($rank, $winner_rank, count($rank));
+					if ($cmp_rank == 1) { // ... und nachschauen ob sie besser ist als die vom bisher führenden
+						$winner_rank = $rank; // bisher bester aktualisieren
+						$winner_ids = [$p['id']];
+					}
+					else if ($cmp_rank == 0) { // nachschauen ob sie gleich gut ist
+						array_push($winner_ids, $p['id']);
+					}
+				}
+
+
+				// set Gewinner in db:
+				$query_set_winner_money = $db->prepare("UPDATE `players` SET `money`=`money`+:pot_money, `is_winner`=TRUE WHERE `id` IN (:winner_ids)");
+				$query_set_winner_money->execute([
+					':winner_ids' => implode(',', $winner_ids),
+					':pot_money' => $game['pot_money'] / count($winner_ids),
+				]);
+
+				var_dump($winner_ids);
+
+				$you['bet'] = 0; // Gebot zurücksetzen
+				$game['pot_money'] = 0; // Pot zurücksetzen
+
+
+				echo '<script type="text/javascript" src="timer.js"></script>'; // start timer to next round
+				++$game['phase'];
+				$new_phase = true;
+			}
+		break;
+
+
+
+
+
 		case dealing:
 			// Gebote auf 0$ zurücksetzen / noch kein Gewinner:
 			$query_reset_bets = $db->prepare('UPDATE `players` SET `last_action`=:start_action, `bet`=0, `is_winner`=FALSE  WHERE `game`=:game_id');
@@ -351,85 +439,7 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 
 			$game['current_player'] = $big_blind_player['next_player']; // Spieler links vom big blind beginnt die Runde
 
-			++$game['phase']; // nächste Phase
-		break;
-
-		case preflop:
-			if (($you['id'] == $game['current_player'] && get_next_player($db, $you)['id'] == $game['highest_bet_player'] && $game['highest_bet'] != $game['big_blind_money'] || !$raised && $game['current_player'] == $game['highest_bet_player']) && $valid_action) {
-			// (Du bist dran UND dein nächster Spiler hat am meisten Geboten UND das höchste Gebot ist nicht der big blind) ODER (es wurde nicht erhöht UND der Spieler der dran ist hat am meisten Geboten) UND die Aktion war gültig
-				
-				$game['current_player'] = get_next_player($db, $dealer)['id']; // Spieler links vom Dealer ist dran
-				$game['highest_bet_player'] = $game['current_player']; // Damit zumindest jeder einmal dran kommt
-				++$game['phase']; // nächste Phase
-				$new_phase = true;
-			}
-		break;
-
-		case flop:
-		case turn:
-		case river:
-			if ($you['id'] == $game['current_player'] && get_next_player($db, $you)['id'] == $game['highest_bet_player'] && $valid_action) {
-				$game['current_player'] = get_next_player($db, $dealer)['id'];
-				$game['highest_bet_player'] = $game['current_player'];
-				++$game['phase'];
-				$new_phase = true;
-			}
-
-			if ($game['phase'] == showdown) {
-				$query_players_in_game = $db->prepare("SELECT `id`, `card1`, `card2` FROM `players` WHERE `game`=:game_id AND NOT `last_action`=:fold");
-				$query_players_in_game->execute([
-					':game_id' => $game['id'],
-					':fold' => fold,
-				]);
-
-				// Gewinner ermitteln:
-				$winner_ids = [];
-				$winner_rank = [0, 0, 0, 0, 0, 0];
-				while ($p = $query_players_in_game->fetch(PDO::FETCH_ASSOC)) {
-
-					$query_card = $db->prepare("SELECT `rank`, `suit` FROM `cards` WHERE `id`=:player_card1_id OR `id`=:player_card2_id OR `id`=:game_card1_id OR `id`=:game_card2_id OR `id`=:game_card3_id OR `id`=:game_card4_id OR `id`=:game_card5_id");
-					$query_card->execute([
-						":player_card1_id" => $p['card1'],
-						":player_card2_id" => $p['card2'],
-						":game_card1_id" => $game['card1'],
-						":game_card2_id" => $game['card2'],
-						":game_card3_id" => $game['card3'],
-						":game_card4_id" => $game['card4'],
-						":game_card5_id" => $game['card5'],
-					]);
-					$cards = [];
-					while ($c = $query_card->fetch(PDO::FETCH_ASSOC))
-						array_push($cards, $c);
-				
-					$rank = poker_hand($cards); // Beste kartenkombination des Spielers herausfinden ...
-					$cmp_rank = array_greater_recursive($rank, $winner_rank, count($rank));
-					if ($cmp_rank == 1) { // ... und nachschauen ob sie besser ist als die vom bisher führenden
-						$winner_rank = $rank; // bisher bester aktualisieren
-						$winner_ids = [$p['id']];
-					}
-					else if ($cmp_rank == 0) { // nachschauen ob sie gleich gut ist
-						array_push($winner_ids, $p['id']);
-					}
-				}
-
-
-				// set Gewinner in db:
-				$query_set_winner_money = $db->prepare("UPDATE `players` SET `money`=`money`+:pot_money, `is_winner`=TRUE WHERE `id` IN (:winner_ids)");
-				$query_set_winner_money->execute([
-					':winner_ids' => implode(',', $winner_ids),
-					':pot_money' => $game['pot_money'] / count($winner_ids),
-				]);
-
-				var_dump($winner_ids);
-
-				$you['bet'] = 0; // Gebot zurücksetzen
-				$game['pot_money'] = 0; // Pot zurücksetzen
-
-
-				echo '<script type="text/javascript" src="timer.js"></script>'; // start timer to next round
-				++$game['phase'];
-				$new_phase = true;
-			}
+			$game['phase'] = preflop; // nächste Phase
 		break;
 	}
 
@@ -442,7 +452,7 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 		$game['current_player'] = get_next_player($db, $you)['id']; // nächster Spieler ist dran, außer wenn eine neue Phase gestartet hat, man nicht dran ist oder die Aktion ungültig war.
 	
 	if (debug) print_debug($game);
-	print_game(); // Ausgabe
+	print_game($you, $game); // Ausgabe
 	set_game($db, $game); // Zurück auf die db schreiben
 }
 ?>
