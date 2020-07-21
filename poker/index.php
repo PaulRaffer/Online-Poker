@@ -243,11 +243,7 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 							':pot_money' => $game['pot_money'],
 						]);
 
-						$game['pot_money'] = 0; // Pot leeren
-						$you['bet'] = 0; // Gebot zurücksetzen
-						$game['phase'] = 0; // Neue Runde
-
-						$game['dealer'] = $dealer['next_player'];
+						$game['phase'] = dealing; // Neue Runde
 					}
 				break;
 			}
