@@ -335,8 +335,6 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 					':pot_money' => $game['pot_money'] / count($winner_ids),
 				]);
 
-				var_dump($winner_ids);
-
 				$you['bet'] = 0; // Gebot zurücksetzen
 				$game['pot_money'] = 0; // Pot zurücksetzen
 
@@ -376,19 +374,9 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 			]);
 			$big_blind_player = $query_big_blind_player->fetch();
 
-			if (debug) echo
-				'<table>'.
-				'<tr><td>DEALER:</td><td>'.$game['dealer'].'</td></tr>'.
-				'<tr><td>SMALL BLIND:</td><td>'.$small_blind_player_id.'</td></tr>'.
-				'<tr><td>BIG BLIND:</td><td>'.$big_blind_player_id.'</td></tr>'.
-				'<tr><td>START PLAYER:</td><td>'.$big_blind_player['next_player'].'</td></tr>'.
-				'</table>';
-
-
 			// Karten erstellen und mischen:
 			$cards = range(1, 52);
 			shuffle($cards);
-			if (debug) foreach ($cards as $c) { echo "$c "; }
 				
 			$card_top = 0;
 			// Karten austeilen:
@@ -440,7 +428,6 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 	if (!$new_phase && $old_phase != dealing && $you['id'] == $game['current_player'] && $valid_action)
 		$game['current_player'] = get_next_player($db, $you)['id']; // nächster Spieler ist dran, außer wenn eine neue Phase gestartet hat, man nicht dran ist oder die Aktion ungültig war.
 	
-	if (debug) print_debug($game);
 	print_game($you, $game); // Ausgabe
 	set_game($db, $game); // Zurück auf die db schreiben
 }
