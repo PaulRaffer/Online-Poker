@@ -103,6 +103,45 @@ function bet(&$game, &$player, $new_bet) { // Betrag bieten
 	$game['pot_money'] += $bet_diff;       // Pot erhöhen
 }
 
+function get_winner_ids($db, $game) {
+	$query_players_in_game = $db->prepare("SELECT `id`, `card1`, `card2` FROM `players` WHERE `game`=:game_id AND NOT `last_action`=:fold");
+	$query_players_in_game->execute([
+		':game_id' => $game['id'],
+		':fold' => fold,
+	]);
+
+	// Gewinner ermitteln:
+	$winner_ids = [];
+	$winner_rank = [0, 0, 0, 0, 0, 0];
+	while ($p = $query_players_in_game->fetch(PDO::FETCH_ASSOC)) {
+
+		$query_card = $db->prepare("SELECT `rank`, `suit` FROM `cards` WHERE `id`=:player_card1_id OR `id`=:player_card2_id OR `id`=:game_card1_id OR `id`=:game_card2_id OR `id`=:game_card3_id OR `id`=:game_card4_id OR `id`=:game_card5_id");
+		$query_card->execute([
+			":player_card1_id" => $p['card1'],
+			":player_card2_id" => $p['card2'],
+			":game_card1_id" => $game['card1'],
+			":game_card2_id" => $game['card2'],
+			":game_card3_id" => $game['card3'],
+			":game_card4_id" => $game['card4'],
+			":game_card5_id" => $game['card5'],
+		]);
+		$cards = [];
+		while ($c = $query_card->fetch(PDO::FETCH_ASSOC))
+			array_push($cards, $c);
+	
+		$rank = poker_hand($cards); // Beste kartenkombination des Spielers herausfinden ...
+		$cmp_rank = array_greater_recursive($rank, $winner_rank, count($rank));
+		if ($cmp_rank == 1) { // ... und nachschauen ob sie besser ist als die vom bisher führenden
+			$winner_rank = $rank; // bisher bester aktualisieren
+			$winner_ids = [$p['id']];
+		}
+		else if ($cmp_rank == 0) { // nachschauen ob sie gleich gut ist
+			array_push($winner_ids, $p['id']);
+		}
+	}
+	return $winner_ids;
+}
+
 ?>
 
 <html>
@@ -164,9 +203,9 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 	$query_players->execute([ ':game_id' => $game['id'], ]);
 	
 	if (!$you) {                                                                    // WENN MAN NOCH NICHT IM SPIEL IST:
-		if ($query_players->rowCount() == 0) {                                      // WENN NOCH KEINE SPIELER IM SPIEL SIND:
-			add_player($db, $user_id, $game['id']);                                 //  SPIELER HINZUFÜGEN
-			$game['dealer'] = $db->query('SELECT LAST_INSERT_ID()')->fetchColumn(); // ERSTER SPIELER IST DEALER
+		if ($query_players->rowCount() == 0) {                                      //  WENN NOCH KEINE SPIELER IM SPIEL SIND:
+			add_player($db, $user_id, $game['id']);                                 //   SPIELER HINZUFÜGEN
+			$game['dealer'] = $db->query('SELECT LAST_INSERT_ID()')->fetchColumn(); //   ERSTER SPIELER IST DEALER
 		} else {
 			// Spieler als letzen Spieler einfügen:
 			$first_player = get_first_player($db, $game); 
@@ -291,42 +330,7 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 			}
 
 			if ($game['phase'] == showdown) {
-				$query_players_in_game = $db->prepare("SELECT `id`, `card1`, `card2` FROM `players` WHERE `game`=:game_id AND NOT `last_action`=:fold");
-				$query_players_in_game->execute([
-					':game_id' => $game['id'],
-					':fold' => fold,
-				]);
-
-				// Gewinner ermitteln:
-				$winner_ids = [];
-				$winner_rank = [0, 0, 0, 0, 0, 0];
-				while ($p = $query_players_in_game->fetch(PDO::FETCH_ASSOC)) {
-
-					$query_card = $db->prepare("SELECT `rank`, `suit` FROM `cards` WHERE `id`=:player_card1_id OR `id`=:player_card2_id OR `id`=:game_card1_id OR `id`=:game_card2_id OR `id`=:game_card3_id OR `id`=:game_card4_id OR `id`=:game_card5_id");
-					$query_card->execute([
-						":player_card1_id" => $p['card1'],
-						":player_card2_id" => $p['card2'],
-						":game_card1_id" => $game['card1'],
-						":game_card2_id" => $game['card2'],
-						":game_card3_id" => $game['card3'],
-						":game_card4_id" => $game['card4'],
-						":game_card5_id" => $game['card5'],
-					]);
-					$cards = [];
-					while ($c = $query_card->fetch(PDO::FETCH_ASSOC))
-						array_push($cards, $c);
-				
-					$rank = poker_hand($cards); // Beste kartenkombination des Spielers herausfinden ...
-					$cmp_rank = array_greater_recursive($rank, $winner_rank, count($rank));
-					if ($cmp_rank == 1) { // ... und nachschauen ob sie besser ist als die vom bisher führenden
-						$winner_rank = $rank; // bisher bester aktualisieren
-						$winner_ids = [$p['id']];
-					}
-					else if ($cmp_rank == 0) { // nachschauen ob sie gleich gut ist
-						array_push($winner_ids, $p['id']);
-					}
-				}
-
+				$winner_ids = get_winner_ids($db, $game);
 
 				// set Gewinner in db:
 				$query_set_winner_money = $db->prepare("UPDATE `players` SET `money`=`money`+:pot_money, `is_winner`=TRUE WHERE `id` IN (:winner_ids)");
