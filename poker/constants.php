@@ -3,23 +3,22 @@
 define("debug", false);
 
 // PHASE:
-define("phase0", 0);
-define("dealing", 1);
-define("preflop", 2);
-define("flop", 3);
-define("turn", 4);
-define("river", 5);
-define("showdown", 6);
+define("before_start", 0);
+define("preflop", 1);
+define("flop", 2);
+define("turn", 3);
+define("river", 4);
+define("showdown", 5);
+define("dealing", 6);
 
 define("phase_num_to_str", [
-	phase0 => "Phase0",
-	dealing => "Dealing",
+	before_start => "Before start",
 	preflop => "Preflop",
 	flop => "Flop",
 	turn => "Turn",
 	river => "River",
 	showdown => "Showdown",
-	showdown+1 => "Showdown",
+	dealing => "Showdown",
 ]);
 
 
