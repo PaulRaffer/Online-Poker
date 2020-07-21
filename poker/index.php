@@ -274,9 +274,9 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 
 	switch ($game['phase']) {
 		case preflop:
+			
 			if (($you['id'] == $game['current_player'] && get_next_player($db, $you)['id'] == $game['highest_bet_player'] && $game['highest_bet'] != $game['big_blind_money'] || !$raised && $game['current_player'] == $game['highest_bet_player']) && $valid_action) {
 			// (Du bist dran UND dein nächster Spiler hat am meisten Geboten UND das höchste Gebot ist nicht der big blind) ODER (es wurde nicht erhöht UND der Spieler der dran ist hat am meisten Geboten) UND die Aktion war gültig
-				
 				$game['current_player'] = get_next_player($db, $dealer)['id']; // Spieler links vom Dealer ist dran
 				$game['highest_bet_player'] = $game['current_player']; // Damit zumindest jeder einmal dran kommt
 				++$game['phase']; // nächste Phase
@@ -351,11 +351,11 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 			}
 		break;
 
-
-
-
-
 		case dealing:
+
+			$game['dealer'] = $dealer['next_player']; // Dealer-Button wird weitergegeben
+			$dealer = get_dealer($db, $game);
+
 			// Gebote auf 0$ zurücksetzen / noch kein Gewinner:
 			$query_reset_bets = $db->prepare('UPDATE `players` SET `last_action`=:start_action, `bet`=0, `is_winner`=FALSE  WHERE `game`=:game_id');
 			$query_reset_bets->execute([
@@ -380,8 +380,7 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 			]);
 			$big_blind_player = $query_big_blind_player->fetch();
 
-			if (debug)
-			echo
+			if (debug) echo
 				'<table>'.
 				'<tr><td>DEALER:</td><td>'.$game['dealer'].'</td></tr>'.
 				'<tr><td>SMALL BLIND:</td><td>'.$small_blind_player_id.'</td></tr>'.
@@ -395,24 +394,23 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 			shuffle($cards);
 			if (debug) foreach ($cards as $c) { echo "$c "; }
 				
-			$card_top = -1;
+			$card_top = 0;
 			// Karten austeilen:
 			while ($p = $query_players->fetch()) {
 				$query_cards = $db->prepare("UPDATE `players` SET `card1`=:card1, `card2`=:card2 WHERE `id`=:player_id");
 				$query_cards->execute([
 					':player_id' => $p['id'],
-					':card1' => $cards[$card_top+=1],
-					':card2' => $cards[$card_top+=1],
+					':card1' => $cards[$card_top++],
+					':card2' => $cards[$card_top++],
 				]);
 			}
 
 			// Karten auf den tisch legen:
 			for ($c = 1; $c <= 5; ++$c)
-				$game["card$c"] = $cards[$card_top+=1];
+				$game["card$c"] = $cards[$card_top++];
 
 			// Pot leeren
 			$game['pot_money'] = 0;
-
 
 			bet($game, $small_blind_player, $game['small_blind_money']); // Small Blind abziehen
 			bet($game, $big_blind_player, $game['big_blind_money']); // Big Blind abziehen
@@ -441,11 +439,6 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 
 			$game['phase'] = preflop; // nächste Phase
 		break;
-	}
-
-	if ($game['phase'] == showdown+1) {
-		$game['phase'] = dealing; // wieder von vorne
-		$game['dealer'] = $dealer['next_player']; // Dealer-Button wird weitergegeben
 	}
 
 	if (!$new_phase && $old_phase != dealing && $you['id'] == $game['current_player'] && $valid_action)
