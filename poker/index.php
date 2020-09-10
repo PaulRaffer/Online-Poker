@@ -265,15 +265,15 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 				break;
 
 				case fold:
-					$query_players = $db->prepare("SELECT `id` FROM `players` WHERE `game`=:game_id AND NOT `last_action`=:fold AND NOT `id`=:you_id");
-					$query_players->execute([
+					$query_winner = $db->prepare("SELECT `id` FROM `players` WHERE `game`=:game_id AND NOT `last_action`=:fold AND NOT `id`=:you_id");
+					$query_winner->execute([
 						':game_id' => $game['id'],
 						':fold' => fold,
 						':you_id' => $you['id'],
 					]);
 
-					if ($query_players->rowCount() == 1) { // Nur noch ein Spieler übrig => Gewonnen
-						$winner = $query_players->fetch(PDO::FETCH_ASSOC);
+					if ($query_winner->rowCount() == 1) { // Nur noch ein Spieler übrig => Gewonnen
+						$winner = $query_winner->fetch(PDO::FETCH_ASSOC);
 						
 						// Gewinner erhält Pot:
 						$query_set_winner_money = $db->prepare("UPDATE `players` SET `money`=`money`+:pot_money, `is_winner`=TRUE WHERE `id`=:winner_id");
