@@ -1,49 +1,40 @@
 .game {
     display: flex;
-    border: 3px solid goldenrod;
-    padding: 0.5em;
-}
-@media only screen and (max-width: 420px) {
-    .game table {
-        display: none;
-    }
+    padding: 0.3em;
 }
 
 .player {
-    border: 3px solid black;
-    margin: 0.8em;
     display: flex;
-    padding: 0.5em;
+    margin: 0.5em;
+    padding: 0.3em;
+}
+
+@media only screen and (min-width: 700px) {
+    .player {
+        display: inline-flex;
+    }
 }
 
 
-@media only screen and (max-width: 420px) {
+@media only screen and (max-width: 530px) {
     .game tr>td:nth-child(1), .player tr>td:nth-child(1) {
         display: none;
     }
     .rank { display: none; }
 }
 
-.player_info {
-    min-width: 5em;
-}
-@media only screen and (min-width: 420px) {
-    .player_info { width: 30%; }
-}
 
 
-
-
-.game_cards, .player_cards {
+.cards {
     flex-grow: 1;
     line-height: 100%;
     font-size: 5.5em;
 }
-.game_cards {
+.game>.cards {
     text-align: center;
 }
 
-.game_cards>span, .player_cards>span {
+.cards>span {
     height: 100%;
     display: inline-flex;
     align-items: center;
@@ -55,69 +46,51 @@
 .player_dealer_button>span, .player_current_player>span, .player_you>span {
     display: inline-flex;
     align-items: center;
-    /*width: 100%;*/
-    
 }
 
 .player_dealer_button {
     flex-grow: 1;
-    /*border: 1px solid orange;*/
     height: 25%;
     font-size: 1.5em;
-    color: blue;
     text-align: right;
-}
-.start_round_button {
-    background-color: blue;
+    /*display: none;*/
 }
 
 .player_current_player {
     height: 25%;
     font-size: 1.2em;
     text-align: right;
-    color: green;
+    /*display: none;*/
 }
 
 .player_you {
     height: 25%;
     font-size: 1.5em;
     text-align: right;
-    color: red;
+    /*display: none;*/
 }
 
 .player_winner {
     height: 25%;
     font-size: 1.4em;
     text-align: right;
-    color:goldenrod;
+    /*display: none;*/
 }
 
-.dealer { border: 3px solid blue; }
-.you { border: 3px solid red; }
-.current_player { background-color: lightgreen; }
-.winner { background-color: yellow; }
+.action {
+    position: fixed;
+    bottom: 0.3em;
+    padding: 0.3em;
+    width: calc(100% - 2em);
+    background-color: inherit;
+}
+body {
+    margin-bottom: 9em;
+}
 
 .fold { opacity: 0.4; }
 
-.♠, .♣ { color: black; }
-.♥, .♦ { color: red; }
-
-.money { color: goldenrod; font-weight: bold; }
-input[name="raise_money"] { width: 6em; }
-
-
-/* DARKMODE
-html {
-    background-color: black;
-    color: gray;
+.money {
+    font-weight: bold;
 }
-.game { border: 3px solid darkgoldenrod; }
-.player_you { color: darkred; }
-.dealer { border: 3px solid darkblue; }
-.you { border: 3px solid darkred; }
-.current_player { background-color: rgb(30, 60, 30); }
-.♠, .♣ { color: gray; }
-.♥, .♦ { color: darkred; }
-
-.money { color: darkgoldenrod; font-weight: bold; }
-*/
+input[name="raise_money"] { width:6em; }

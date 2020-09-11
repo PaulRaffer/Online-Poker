@@ -1,0 +1,54 @@
+body {
+    background-color: #121212;
+    color: lightgray;
+}
+input {
+    background-color: 121212;
+    color: lightgray;
+}
+
+.game {
+    border: 3px solid darkgoldenrod;
+}
+.player {
+    border: 3px solid gray;
+}
+.dealer {
+    border: 3px solid darkblue;
+}
+.you {
+    border: 3px solid darkred;
+}
+.current_player {
+background-color: #003000;
+}
+.winner {
+    background-color: yellow;
+}
+
+.player_dealer_button {
+    color: darkblue;
+}
+.player_current_player {
+    color: darkgreen;
+}
+.player_you {
+    color: darkred;
+}
+.player_winner {
+    color:goldenrod;
+}
+
+.money {
+    color: goldenrod;
+}
+
+.cards {
+    color: lightgray;
+}
+.♠, .♣ {
+    color: gray;
+}
+.♥, .♦ {
+    color: darkred;
+}

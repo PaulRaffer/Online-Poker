@@ -160,7 +160,7 @@ CREATE TABLE `players` (
 	`user`        INT,
 	`game`        INT     NOT NULL,
 	`next_player` INT     DEFAULT NULL,
-	`money`       INT     DEFAULT 1000,
+	`money`       INT     DEFAULT 10000,
 	`card1`       INT     DEFAULT NULL,
 	`card2`       INT     DEFAULT NULL,
 	`is_winner`   BOOLEAN DEFAULT FALSE,
