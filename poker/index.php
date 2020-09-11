@@ -41,8 +41,8 @@ function print_game($you, $game) { // Spiel ausgeben ?>
 				<input type="submit" value="START GAME" name="start_game" />
 			<?php } else { ?>
 				<table>
-					<tr><td><label for="check_call">Check/Call:</label></td><td><input type="radio" name="action" id="check_call" value="1" checked /></td><td></td></tr>
-					<tr><td><label for="raise">Raise:</label></td><td><input type="radio" name="action" id="raise" value="2" /></td><td><input type="number" onfocus="raise_func()" name="raise_money" class="money" /><span class="money">$</span></td></tr>
+					<tr><td><label for="check_call">Check/Call:</label></td><td><input type="radio" name="action" id="check_call" value="1" checked /></td><td><label for="check_call" id="check_call_money" class="money"></label></td></tr>
+					<tr><td><label for="raise">Raise:</label></td><td><input type="radio" name="action" id="raise" value="2" onfocus="raise_radio_action()" /></td><td><label for="raise" id="raise_money" class="money"><input type="number" onclick="raise_money_action()" id="raise_money_input" name="raise_money" class="money" />$</label></td></tr>
 					<tr><td><label for="fold">Fold:</label></td><td><input type="radio" name="action" id="fold" value="3" /></td><td></td></tr>
 				</table>
 				<input type="submit" name="set_action" />
@@ -252,9 +252,9 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 
 				case raise:
 					$raise_money = $_POST['raise_money'];
-					$min_bet = $game['highest_bet'] + $game['highest_raise'];
+					$min_raise = $game['highest_bet'] + $game['highest_raise'];
 					
-					if ($raise_money >= $min_bet) { // genug erhöht?
+					if ($raise_money >= $min_raise) { // genug erhöht?
 						$game['highest_raise'] = $raise_money - $game['highest_bet']; // highest_raise aktualisieren
 						bet($game, $you, $raise_money); // erhöhen
 
@@ -264,7 +264,7 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 						$raised = true;
 					} else {
 						$valid_action = false; // nicht erlaupt, zu wenig erhöht
-						echo '<span class="error">You have to raise at least to <span class="money">'.$min_bet.'$</span>!</span><br />';
+						echo '<span class="error">You have to raise at least to <span class="money">'.$min_raise.'$</span>!</span><br />';
 					}
 				break;
 
