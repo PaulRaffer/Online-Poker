@@ -44,7 +44,7 @@ $str .=
 	'</table></div>';
 
 // KARTEN AM TISCH ANZEIGEN:
-$str .= '<div class="game_cards">';
+$str .= '<div class="cards">';
 
 $game_card_ids = [];
 
@@ -127,7 +127,7 @@ while ($pu = $query_players_users->fetch(PDO::FETCH_ASSOC)) {
 		? $hand : '').
 		'</td></tr>'.
 		'<tr><td>Last Action:</td><td>'.action_num_to_str[$pu['last_action']].'</td></tr>'.
-		'</table></div><div class="player_cards">'.
+		'</table></div><div class="cards">'.
 		($pu['id'] == $player_id && $game['phase'] >= preflop
 		|| $game['phase'] >= showdown && $pu['last_action'] != fold
 		? '<span class="'.$player_cards[0]['suit'].'">'.$player_cards[0]['symbol'].'</span>'.

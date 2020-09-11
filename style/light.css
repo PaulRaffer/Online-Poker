@@ -1,0 +1,49 @@
+body {
+    background-color: white;
+}
+
+.game {
+    border: 3px solid goldenrod;
+}
+.player {
+    border: 3px solid black;
+}
+.dealer {
+    border: 3px solid blue;
+}
+.you {
+    border: 3px solid red;
+}
+.current_player {
+background-color: lightgreen;
+}
+.winner {
+    background-color: yellow;
+}
+
+.player_dealer_button {
+    color: blue;
+}
+.player_current_player {
+    color: green;
+}
+.player_you {
+    color: red;
+}
+.player_winner {
+    color:goldenrod;
+}
+
+.money {
+    color: goldenrod;
+}
+
+.cards {
+    color: black;
+}
+.♠, .♣ {
+    color: black;
+}
+.♥, .♦ {
+    color: red;
+}

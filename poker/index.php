@@ -35,20 +35,20 @@ function set_game($db, $game) { // Spiel auf datenbank schreiben
 
 function print_game($you, $game) { // Spiel ausgeben ?>
 	<span id="players"></span>
-	<div class="you">
+	<div class="you action">
 		<form method="post">
 			<?php if ($you['id'] == $game['dealer'] && $game['phase'] == before_start) { ?>
 				<input type="submit" value="START GAME" name="start_game" />
 			<?php } else { ?>
 				<table>
-					<tr><td>Check/Call:</td><td><input type="radio" name="action" value="1" checked /><td></td></td>
-					<tr><td>Raise:</td><td><input type="radio" name="action" value="2" id="raise_radio" /><td><input type="number" onfocus="raise_func()" name="raise_money" class="money" /><span class="money">$</span></td></td>
-					<tr><td>Fold:</td><td><input type="radio" name="action" value="3" /><td></td></td>
+					<tr><td><label for="check_call">Check/Call:</label></td><td><input type="radio" name="action" id="check_call" value="1" checked /></td><td></td></tr>
+					<tr><td><label for="raise">Raise:</label></td><td><input type="radio" name="action" id="raise" value="2" /></td><td><input type="number" onfocus="raise_func()" name="raise_money" class="money" /><span class="money">$</span></td></tr>
+					<tr><td><label for="fold">Fold:</label></td><td><input type="radio" name="action" id="fold" value="3" /></td><td></td></tr>
 				</table>
 				<input type="submit" name="set_action" />
 			<?php } ?>
 		</form>
-		If you find a bug, please create an <a href="https://github.com/PaulRaffer/Online-Poker/issues" target="_blank">issue</a> on <a href="https://github.com/PaulRaffer/Online-Poker" target="_blank">GitHub</a>!
+		<span>If you find a bug, please create an <a href="https://github.com/PaulRaffer/Online-Poker/issues" target="_blank">issue</a> on <a href="https://github.com/PaulRaffer/Online-Poker" target="_blank">GitHub</a>!</span>
 	</div>
 <?php }
 
@@ -61,7 +61,7 @@ function get_you($db, $user_id, $game_id) { // Eigenen Spieler von Datanbank les
 	return $query->fetch(PDO::FETCH_ASSOC);
 }
 
-function add_player($db, $user_id, $game_id, $next_player_id = NULL, $start_money = 1000) { // Spieler zu Spiel hinzufügen
+function add_player($db, $user_id, $game_id, $next_player_id = NULL, $start_money = 10000) { // Spieler zu Spiel hinzufügen
 	$query = $db->prepare('INSERT INTO `players` (`user`, `game`, `next_player`, `money`, `last_action`) VALUES (:user_id, :game_id, :next_player_id, :start_money, :fold)');
 	$query->execute([
 		':user_id' => $user_id,
@@ -147,7 +147,11 @@ function get_winner_ids($db, $game) {
 <html>
 	<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
 		<link rel="stylesheet" type="text/css" href="../style/main.css" />
+		<link rel="stylesheet" type="text/css" href="../style/light.css" title="Light" />
+		<link rel="alternate stylesheet" type="text/css" href="../style/dark.css" title="Dark" />
+
 		<script type="text/javascript" src="reload.js"></script>
 		<script type="text/javascript" src="raise.js"></script>
 	</head>
@@ -233,9 +237,9 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 		$game['phase'] = dealing;
 	} else if (isset($_POST['set_action'])) { // Action-Button geklickt
 		if ($you['id'] != $game['current_player'] && $game['phase'] != showdown + 1) // nicht dran:
-			echo '<span class="error">Du bist nicht dran!</span><br />';
+			echo '<span class="error">It\'s not your turn!</span><br />';
 		else if (!isset($_POST['action'])) // keine Aktion ausgewählt:
-			echo '<span class="error">Bitte Aktion Auswählen!</span><br />';
+			echo '<span class="error">Please select an action!</span><br />';
 		else {
 			$action = $_POST['action'];
 			$valid_action = true;
@@ -311,7 +315,7 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 		case preflop:
 			
 			if (($you['id'] == $game['current_player'] && get_next_player($db, $you)['id'] == $game['highest_bet_player'] && $game['highest_bet'] != $game['big_blind_money'] || !$raised && $game['current_player'] == $game['highest_bet_player']) && $valid_action) {
-			// (Du bist dran UND dein nächster Spiler hat am meisten Geboten UND das höchste Gebot ist nicht der big blind) ODER (es wurde nicht erhöht UND der Spieler der dran ist hat am meisten Geboten) UND die Aktion war gültig
+			// (Du bist dran UND dein nächster Spieler hat am meisten Geboten UND das höchste Gebot ist nicht der big blind) ODER (es wurde nicht erhöht UND der Spieler der dran ist hat am meisten Geboten) UND die Aktion war gültig
 				$game['current_player'] = get_next_player($db, $dealer)['id']; // Spieler links vom Dealer ist dran
 				$game['highest_bet_player'] = $game['current_player']; // Damit zumindest jeder einmal dran kommt
 				++$game['phase']; // nächste Phase
@@ -339,8 +343,8 @@ if (isset($_GET['game_name'])) { // NEUES SPIEL ERSTELLEN:
 					':pot_money' => $game['pot_money'] / count($winner_ids),
 				]);
 
-				$you['bet'] = 0; // Gebot zurücksetzen
-				$game['pot_money'] = 0; // Pot zurücksetzen
+				//$you['bet'] = 0; // Gebot zurücksetzen
+				//$game['pot_money'] = 0; // Pot zurücksetzen
 
 
 				echo '<script type="text/javascript" src="timer.js"></script>'; // start timer to next round
