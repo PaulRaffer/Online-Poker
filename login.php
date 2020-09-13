@@ -16,7 +16,6 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 	
 	if ($user && password_verify($password, $user['password'])) {
 		$_SESSION['user_id'] = $user['id'];
-		echo "<p class=\"success\">Hello $username, you are logged in!</p>";
 		header('Location: /poker/index');
 	} else {
 		echo '<p class="error">Wrong username or password!</p>';
@@ -41,18 +40,19 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 	<script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" type="text/javascript"></script>
 	<script src="js/script.js"></script>
+	<script src="js/.js"></script>
 </head>
 <body>
 	<div class="login-container">
 		<div class="login-wrapper">
-			<form class="login-form" method="POST">
+			<form class="login-form validate-form" method="POST">
 				<span class="login-form-title">Login</span>
-				<div class="login-input-wrap">
+				<div class="login-input-wrap validate-input">
 					<span class="login-label">Username</span>
 					<input class="login-input" type="text" name="username" placeholder="Enter your username" data-validate="Username is required" required>
 					<span class="focus-input" data-symbol="&#xf206;"></span>
 				</div>
-				<div class="login-input-wrap">
+				<div class="login-input-wrap validate-input">
 					<span class="login-label">Password</span>
 					<input class="login-input" type="password" name="password" placeholder="Enter your password" data-validate="Password is required">
 					<span class="focus-input" data-symbol="&#xf190;"></span>

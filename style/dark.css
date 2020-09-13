@@ -128,6 +128,7 @@ body {
 	left: 0;
 	padding-left: 7px;
 	padding-top: 0px;
+	transition: all .3s;
   }
 
 .login-input:focus + .focus-input::before {
@@ -135,7 +136,16 @@ body {
 	color: #cacdd2;
 }
 
+.has-val.login-input + .focus-input::before {
+	width: 100%;
+	color: #cacdd2;
+  }
+
 .login-input:focus + .focus-input::after {
+	color: #cacdd2;
+  }
+
+.has-val.login-input + .focus-input::after {
 	color: #cacdd2;
   }
 
@@ -223,6 +233,51 @@ body {
 	color: #a64bf4;
 }
 
+.validate-input {
+  position: relative;
+}
+
+.alert-validate::before {
+  content: attr(data-validate);
+  position: absolute;
+  max-width: 70%;
+  background-color: #fff;
+  border: 1px solid #c80000;
+  border-radius: 2px;
+  padding: 4px 25px 4px 10px;
+  bottom: calc((100% - 20px) / 2);
+  transform: translateY(50%);
+  right: 2px;
+  pointer-events: none;
+
+  color: #c80000;
+  font-size: 13px;
+  line-height: 1.4;
+  text-align: left;
+
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.alert-validate::after {
+  content: "\f06a";
+  font-family: FontAwesome;
+  display: block;
+  position: absolute;
+  color: #c80000;
+  font-size: 16px;
+  bottom: calc((100% - 20px) / 2);
+  transform: translateY(50%);
+  right: 8px;
+}
+
+.alert-validate:hover:before {
+  visibility: visible;
+  opacity: 1;
+}
+
+/*Game*/
 .game {
 	border: 3px solid darkgoldenrod;
 }
