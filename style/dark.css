@@ -1,14 +1,14 @@
 * {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    outline: 0;
-    font-size: 100%;
-    vertical-align: baseline;
-    text-decoration: none !important;
-    font-family: 'Poppins', sans-serif;
-    box-sizing: border-box;
-    user-select: none;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	text-decoration: none !important;
+	font-family: 'Poppins', sans-serif;
+	box-sizing: border-box;
+	user-select: none;
   }
 
 ul {
@@ -21,283 +21,283 @@ html {
 }
 
 body {
-    top: 0;
-    left: 0;
-    font-size: 1rem;
-    line-height: 1.5;
-    background-color: #2a2d32;
-    text-rendering: optimizeLegibility;
+	top: 0;
+	left: 0;
+	font-size: 1rem;
+	line-height: 1.5;
+	background-color: #2a2d32;
+	text-rendering: optimizeLegibility;
 
 }
 
 .login-container{
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-image: url('../media/bg-01.jpg');
-    background-size: cover;
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	background-repeat: no-repeat;
+	background-position: center;
+	background-image: url('../media/bg-01.jpg');
+	background-size: cover;
 }
 
 .login-wrapper{
-    width: 28vw;
-    height: fit-content;
-    min-width: 350px;
-    min-height: 350px;
-    background: #2a2d32;
-    border-radius: 10px;
-    padding: 4vh 3vw 4vh 3vw;
+	width: 28vw;
+	height: fit-content;
+	min-width: 350px;
+	min-height: 350px;
+	background: #2a2d32;
+	border-radius: 10px;
+	padding: 4vh 3vw 4vh 3vw;
 }
 
 .login-form{
-    width: 100%;
+	width: 100%;
 }
 
 .login-form-title{
-    display: block;
-    font-size: 2rem;
-    line-height: 1.2;
-    text-align: center;
-    padding-bottom: 45px;
-    font-weight: 700;
+	display: block;
+	font-size: 2rem;
+	line-height: 1.2;
+	text-align: center;
+	padding-bottom: 45px;
+	font-weight: 700;
 }
 
 .login-input-wrap{
-    width: 100%;
-    position: relative;
-    border-bottom: 2px solid #4a4d52;
-    margin-bottom: 23px;
+	width: 100%;
+	position: relative;
+	border-bottom: 2px solid #4a4d52;
+	margin-bottom: 23px;
 }
 
 .login-label{
-    font-size: 0.9rem;
-    line-height: 1.5;
-    padding-left: 7px;
+	font-size: 0.9rem;
+	line-height: 1.5;
+	padding-left: 7px;
 }
 
 .login-input{
-    user-select: auto;
-    color: #eeeeee;
-    font-size: 1rem;
-    line-height: 1.2;
-    display: block;
-    width: 100%;
-    height: 55px;
-    background: transparent;
-    padding: 0 7px 0 35px;
-    font-weight: 300;
+	user-select: auto;
+	color: #eeeeee;
+	font-size: 1rem;
+	line-height: 1.2;
+	display: block;
+	width: 100%;
+	height: 55px;
+	background: transparent;
+	padding: 0 7px 0 35px;
+	font-weight: 300;
 }
 
 .focus-input{
-    position: absolute;
-    display: block;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    pointer-events: none;
+	position: absolute;
+	display: block;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	pointer-events: none;
 }
 
 .focus-input::before{
-    content:'';
-    display: block;
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: #7a7d82;
-    transition: all .3s;
+	content:'';
+	display: block;
+	position: absolute;
+	bottom: -2px;
+	left: 0;
+	width: 0;
+	height: 2px;
+	background: #7a7d82;
+	transition: all .3s;
 }
 
 .focus-input::after {
-    content: attr(data-symbol);
-    font-family: Material-Design-Iconic-Font;
-    color: #7a7d82;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    height: calc(100% - 25px);
-    bottom: 0;
-    left: 0;
-    padding-left: 7px;
-    padding-top: 0px;
+	content: attr(data-symbol);
+	font-family: Material-Design-Iconic-Font;
+	color: #7a7d82;
+	font-size: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	height: calc(100% - 25px);
+	bottom: 0;
+	left: 0;
+	padding-left: 7px;
+	padding-top: 0px;
   }
 
 .login-input:focus + .focus-input::before {
-    width: 100%;
-    color: #cacdd2;
+	width: 100%;
+	color: #cacdd2;
 }
 
 .login-input:focus + .focus-input::after {
-    color: #cacdd2;
+	color: #cacdd2;
   }
 
 
 .text-right{
-    text-align: right !important;
-    padding-top: 8px;
-    padding-bottom: 23px;
+	text-align: right !important;
+	padding-top: 8px;
+	padding-bottom: 23px;
 }
 
 .text-right a{
-    font-size: 0.9rem;
-    line-height: 1.7;
-    color: #cacdd2;
-    transition: color 0.3s;
-    margin: 0px;
+	font-size: 0.9rem;
+	line-height: 1.7;
+	color: #cacdd2;
+	transition: color 0.3s;
+	margin: 0px;
 }
 
 .text-right a:hover{
-    color: #a64bf4;
+	color: #a64bf4;
 }
 
 .login-submit{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 35px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	margin-top: 35px;
 }
 
 .login-submit-cont{
-    width: 100%;
-    margin: 0 auto;
-    overflow: hidden;
-    z-index: 1;
-    position: relative;
-    border-radius: 25px;
+	width: 100%;
+	margin: 0 auto;
+	overflow: hidden;
+	z-index: 1;
+	position: relative;
+	border-radius: 25px;
 
 }
 
 .login-submit-background{
-    position: absolute;
-    width: 300%;
-    height: 100%;
-    z-index: -1;
-    top: 0;
-    left: -100%;
-    background: linear-gradient(right, #00dbde, #fc00ff, #00dbde, #fc00ff);
-    background: -moz-linear-gradient(right, #00dbde, #fc00ff, #00dbde, #fc00ff);
-    transition: left .3s;
+	position: absolute;
+	width: 300%;
+	height: 100%;
+	z-index: -1;
+	top: 0;
+	left: -100%;
+	background: linear-gradient(right, #00dbde, #fc00ff, #00dbde, #fc00ff);
+	background: -moz-linear-gradient(right, #00dbde, #fc00ff, #00dbde, #fc00ff);
+	transition: left .3s;
 }
 
 .login-submit:hover .login-submit-background{
-    left: 0;
+	left: 0;
 }
 
 .login-submit-btn{
-    cursor: pointer;
-    width: 100%;
-    height: 50px;
-    font-size: 1rem;
-    background: transparent;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+	cursor: pointer;
+	width: 100%;
+	height: 50px;
+	font-size: 1rem;
+	background: transparent;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .login-sign-up1{
-    display: block;
-    text-align: center;
-    font-size: 0.9rem;
-    font-weight: 300;
-    padding-bottom: 17px;
-    margin-top: 8vh;
-    color: #aaacb2;
+	display: block;
+	text-align: center;
+	font-size: 0.9rem;
+	font-weight: 300;
+	padding-bottom: 17px;
+	margin-top: 8vh;
+	color: #aaacb2;
 }
 
 .login-sign-up2 a{
-    display: block;
-    text-align: center;
-    color: #cacdd2;
-    transition: color 0.3s;
+	display: block;
+	text-align: center;
+	color: #cacdd2;
+	transition: color 0.3s;
 }
 
 .login-sign-up2 a:hover{
-    color: #a64bf4;
+	color: #a64bf4;
 }
 
 .game {
-    border: 3px solid darkgoldenrod;
+	border: 3px solid darkgoldenrod;
 }
 .player {
-    border: 3px solid gray;
+	border: 3px solid gray;
 }
 .dealer {
-    border: 3px solid darkblue;
+	border: 3px solid darkblue;
 }
 .you {
-    border: 3px solid darkred;
+	border: 3px solid darkred;
 }
 .current_player {
 background-color: #003000;
 }
 .winner {
-    background-color: yellow;
+	background-color: yellow;
 }
 
 .player_dealer_button {
-    color: darkblue;
+	color: darkblue;
 }
 .player_current_player {
-    color: darkgreen;
+	color: darkgreen;
 }
 .player_you {
-    color: darkred;
+	color: darkred;
 }
 .player_winner {
-    color:goldenrod;
+	color:goldenrod;
 }
 
 .money {
-    color: goldenrod;
+	color: goldenrod;
 }
 
 .cards {
-    color: lightgray;
+	color: lightgray;
 }
 .♠, .♣ {
-    color: gray;
+	color: gray;
 }
 .♥, .♦ {
-    color: darkred;
+	color: darkred;
 }
 
 .fade-in{
-    animation: fadeIn .25s ease-out forwards;
+	animation: fadeIn .25s ease-out forwards;
 }
 
 .fade-out{
-    animation: fadeOut .25s ease-out forwards;
+	animation: fadeOut .25s ease-out forwards;
 }
 
 @keyframes fadeIn{
-    0%{
-        opacity: 0;
-        visibility: hidden;
-        transform: translate(0%, calc(0% + 25px));
-    }
-    100%{
-        opacity: 1;
-        visibility: visible;
-        
-    }
+	0%{
+		opacity: 0;
+		visibility: hidden;
+		transform: translate(0%, calc(0% + 25px));
+	}
+	100%{
+		opacity: 1;
+		visibility: visible;
+		
+	}
 }
 
 @keyframes fadeOut{
-    0%{
-        opacity: 1;
-        visibility: visible;
-    }
-    100%{
-        opacity: 0;
-        visibility: hidden;
-        transform: translate(0%, calc(0% - 25px));
-    }
+	0%{
+		opacity: 1;
+		visibility: visible;
+	}
+	100%{
+		opacity: 0;
+		visibility: hidden;
+		transform: translate(0%, calc(0% - 25px));
+	}
 }

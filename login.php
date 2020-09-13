@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
 
-include($_SERVER['DOCUMENT_ROOT'].'/config.php');
+include "config.php";
 session_start();
 
 if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
@@ -67,7 +67,7 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 					</div>
 				</div>
 				<span class="login-sign-up1">Or Sign Up Using</span>
-				<span class="login-sign-up2"><a href="javascript:delay('register.php')">Sign Up</a></span>
+				<span class="login-sign-up2"><a href="javascript:delay('register')">Sign Up</a></span>
 			</form>
 		</div>
 	</div>
