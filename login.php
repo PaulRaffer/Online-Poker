@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
 
-include "config.php";
+include('config.php');
 session_start();
 
 if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
@@ -40,25 +40,25 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 	<script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" type="text/javascript"></script>
 	<script src="js/script.js"></script>
-	<script src="js/.js"></script>
 </head>
+
 <body>
 	<div class="login-container">
 		<div class="login-wrapper">
-			<form class="login-form validate-form" method="POST">
+			<form class="login-form" method="POST">
 				<span class="login-form-title">Login</span>
-				<div class="login-input-wrap validate-input">
+				<div class="login-input-wrap">
 					<span class="login-label">Username</span>
-					<input class="login-input" type="text" name="username" placeholder="Enter your username" data-validate="Username is required" required>
+					<input class="login-input" type="text" name="username" placeholder="Enter your username" data-validate="Username is required">
 					<span class="focus-input" data-symbol="&#xf206;"></span>
 				</div>
-				<div class="login-input-wrap validate-input">
+				<div class="login-input-wrap">
 					<span class="login-label">Password</span>
 					<input class="login-input" type="password" name="password" placeholder="Enter your password" data-validate="Password is required">
 					<span class="focus-input" data-symbol="&#xf190;"></span>
 				</div>
 				<div class="text-right">
-					<a href='#'>Forgot password?</a>
+					<a href="javascript: delay('reset')">Forgot password?</a>
 				</div>
 				<div class="login-submit">
 					<div class="login-submit-cont">

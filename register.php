@@ -1,6 +1,6 @@
 <?php
 
-include "config.php";
+include('config.php');
 session_start();
 
 if (isset($_POST['register']) && $_SERVER["REQUEST_METHOD"] == "POST") {
@@ -30,7 +30,6 @@ if (isset($_POST['register']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 ?>
-
 
 <html>
 <head>
@@ -63,7 +62,7 @@ if (isset($_POST['register']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 				<div class="login-input-wrap">
 					<span class="login-label">Password</span>
 					<input class="login-input" type="password" name="password" placeholder="Enter your password" data-validate="Password is required">
-					<span class="focus-input" data-symbol="&#xf190;"></span>
+					<div class="focus-input" data-symbol="&#xf190;"></div>
 				</div>
 				<div class="login-submit">
 					<div class="login-submit-cont">
