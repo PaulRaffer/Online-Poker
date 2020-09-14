@@ -49,7 +49,7 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 				<span class="login-form-title">Login</span>
 				<div class="login-input-wrap">
 					<span class="login-label">Username</span>
-					<input class="login-input" type="text" name="username" placeholder="Enter your username" data-validate="Username is required">
+					<input class="login-input" type="text" name="username" placeholder="Enter your username" data-validate="Username is required" required>
 					<span class="focus-input" data-symbol="&#xf206;"></span>
 				</div>
 				<div class="login-input-wrap">
@@ -67,7 +67,7 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 					</div>
 				</div>
 				<span class="login-sign-up1">Or Sign Up Using</span>
-				<span class="login-sign-up2"><a href="javascript:delay('register')">Sign Up</a></span>
+				<span class="login-sign-up2"><a href="javascript:delay('sign_up')">Sign Up</a></span>
 			</form>
 		</div>
 	</div>

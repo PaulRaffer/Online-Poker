@@ -67,7 +67,7 @@ if (isset($_POST['register']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 				<div class="login-submit">
 					<div class="login-submit-cont">
 						<div class="login-submit-background"></div>
-						<input class="login-submit-btn" type="submit" name="login" value="SIGN UP"/>
+						<input class="login-submit-btn" type="submit" name="register" value="SIGN UP"/>
 					</div>
 				</div>
 				<span class="login-sign-up1">Or Log In Using</span>

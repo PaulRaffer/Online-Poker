@@ -192,8 +192,9 @@ body {
 	z-index: -1;
 	top: 0;
 	left: -100%;
-	background: linear-gradient(right, #00dbde, #fc00ff, #00dbde, #fc00ff);
+	background: -webkit-linear-gradient(right, #00dbde, #fc00ff, #00dbde, #fc00ff);
 	background: -moz-linear-gradient(right, #00dbde, #fc00ff, #00dbde, #fc00ff);
+	background: linear-gradient(right, #00dbde, #fc00ff, #00dbde, #fc00ff);
 	transition: left .3s;
 }
 
@@ -243,50 +244,6 @@ body {
 
 .login-sign-up2 a:hover{
 	color: #a64bf4;
-}
-
-.validate-input {
-  position: relative;
-}
-
-.alert-validate::before {
-  content: attr(data-validate);
-  position: absolute;
-  max-width: 70%;
-  background-color: #fff;
-  border: 1px solid #c80000;
-  border-radius: 2px;
-  padding: 4px 25px 4px 10px;
-  bottom: calc((100% - 20px) / 2);
-  transform: translateY(50%);
-  right: 2px;
-  pointer-events: none;
-
-  color: #c80000;
-  font-size: 13px;
-  line-height: 1.4;
-  text-align: left;
-
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.alert-validate::after {
-  content: "\f06a";
-  font-family: FontAwesome;
-  display: block;
-  position: absolute;
-  color: #c80000;
-  font-size: 16px;
-  bottom: calc((100% - 20px) / 2);
-  transform: translateY(50%);
-  right: 8px;
-}
-
-.alert-validate:hover:before {
-  visibility: visible;
-  opacity: 1;
 }
 
 /*Game*/
