@@ -5,14 +5,13 @@ session_start();
 include('config.php');
 ?>
 
-<html>
+<html data-theme="dark">
 
 <head>
 	<title>Poker | Sign Up</title>
 	<?php include('head.php'); ?>
 	<!--Stylesheets-->
 	<link rel="stylesheet" type="text/css" href="style/dark.css" title="Dark" />
-	<link rel="alternate stylesheet" type="text/css" href="style/light.css" title="Light" />
 </head>
 
 <body>

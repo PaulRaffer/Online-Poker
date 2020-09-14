@@ -5,14 +5,13 @@ session_start();
 include('config.php');
 ?>
 
-<html>
+<html data-theme="dark">
 
 <head>
 	<title>Poker | Login</title>
 	<?php include('head.php'); ?>
 	<!--Stylesheets-->
-	<link rel="stylesheet" type="text/css" href="style/dark.css" title="Dark" />
-	<link rel="alternate stylesheet" type="text/css" href="style/light.css" title="Light" />
+	<link rel="stylesheet" type="text/css" href="style/dark.css"/>
 </head>
 
 <body>
@@ -62,9 +61,12 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 				</div>
 				<span class="login-sign-up1">Or Sign Up Using</span>
 				<span class="login-sign-up2"><a href="javascript:delay('sign_up')">Sign Up</a></span>
+				<div class="toggle-container">
+					<input type="checkbox" id="switch" name="theme"/><label for="switch">Toggle</label>
+				</div>
 			</form>
 		</div>
 	</div>
+	<script src="js/theme.js"></script>
 </body>
-
 </html>

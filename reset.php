@@ -5,14 +5,13 @@ session_start();
 include "config.php";
 ?>
 
-<html>
+<html data-theme="dark">
 
 <head>
 	<title>Poker | Reset Password</title>
 	<?php include('head.php'); ?>
 	<!--Stylesheets-->
 	<link rel="stylesheet" type="text/css" href="style/dark.css" title="Dark" />
-	<link rel="alternate stylesheet" type="text/css" href="style/light.css" title="Light" />
 </head>
 
 <body>
@@ -88,4 +87,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			</form>
 		</div>
 	</div>
+	<script src="js/theme.js"></script>
 </body>
+</html>
