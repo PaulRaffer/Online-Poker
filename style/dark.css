@@ -222,6 +222,18 @@ body {
 	color: #aaacb2;
 }
 
+.login-sign-up1 a{
+	color: #cacdd2;
+	transition: color 0.3s;
+	font-weight: 400;
+	font-size: 1rem;
+}
+
+.login-sign-up1 a:hover{
+	color: #a64bf4;
+}
+
+
 .login-sign-up2 a{
 	display: block;
 	text-align: center;

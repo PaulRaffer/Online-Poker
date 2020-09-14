@@ -58,7 +58,7 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 					<span class="focus-input" data-symbol="&#xf190;"></span>
 				</div>
 				<div class="text-right">
-					<a href='#'>Forgot password?</a>
+					<a href="javascript: delay('reset')">Forgot password?</a>
 				</div>
 				<div class="login-submit">
 					<div class="login-submit-cont">
