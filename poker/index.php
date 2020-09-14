@@ -167,7 +167,7 @@ include('constants.php');
 session_start();
 
 if (!isset($_SESSION['user_id'])) { // nicht eingeloggt:
-	header('Location: /login/');    //  zu Login weiterleiten
+	header('Location: /login');    //  zu Login weiterleiten
 	exit;
 }
 

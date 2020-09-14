@@ -1,16 +1,30 @@
 <!DOCTYPE html>
+
 <?php
-
-include('config.php');
 session_start();
+include('config.php');
+?>
 
+<html>
+
+<head>
+	<title>Poker | Login</title>
+	<?php include('head.php'); ?>
+	<!--Stylesheets-->
+	<link rel="stylesheet" type="text/css" href="style/dark.css" title="Dark" />
+	<link rel="alternate stylesheet" type="text/css" href="style/light.css" title="Light" />
+</head>
+
+<body>
+
+<?php
 if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 	
 	$username = $_POST['username'];
 	$password = $_POST['password'];
 	
 	$query = $db->prepare("SELECT * FROM `users` WHERE `username`=:username");
-	$query->execute([ ':username' => $username ]);
+	$query->execute([ ':username' => $username, ]);
 	
 	$user = $query->fetch(PDO::FETCH_ASSOC);
 	
@@ -23,26 +37,6 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-<html>
-<head>
-	<title> Poker | Login </title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
-	<!--Stylesheets-->
-	<link rel="stylesheet" type="text/css" href="style/dark.css" />
-	<link rel="alternate stylesheet" type="text/css" href="style/light.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/font-awesome.min.css">
-	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css"> 
-		
-	<!--JavaScript-->
-	<script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" type="text/javascript"></script>
-	<script src="js/script.js"></script>
-</head>
-
-<body>
 	<div class="login-container">
 		<div class="login-wrapper">
 			<form class="login-form" method="POST">
@@ -63,7 +57,7 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 				<div class="login-submit">
 					<div class="login-submit-cont">
 						<div class="login-submit-background"></div>
-						<input class="login-submit-btn" type="submit" name="login" value="LOGIN"/>
+						<input class="login-submit-btn" type="submit" name="login" value="LOGIN" />
 					</div>
 				</div>
 				<span class="login-sign-up1">Or Sign Up Using</span>
@@ -72,4 +66,5 @@ if (isset($_POST['login']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 		</div>
 	</div>
 </body>
+
 </html>

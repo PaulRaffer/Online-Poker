@@ -1,6 +1,6 @@
 $(document).ready(function(){
     $('.login-wrapper').addClass('fade-in');
-   });
+});
 
 function delay(URL) {
     $(".login-wrapper").removeClass("fade-in");
