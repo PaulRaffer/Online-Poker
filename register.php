@@ -1,6 +1,6 @@
 <?php
 
-include "config.php";
+include('config.php');
 session_start();
 
 if (isset($_POST['register']) && $_SERVER["REQUEST_METHOD"] == "POST") {
@@ -30,7 +30,6 @@ if (isset($_POST['register']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 ?>
-
 
 <html>
 <head>
