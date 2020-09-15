@@ -69,5 +69,6 @@ if (isset($_POST['register']) && $_SERVER["REQUEST_METHOD"] == "POST") {
 			</form>
 		</div>
 	</div>
+	<script src="js/theme.js"></script>
 </body>
 </html>
