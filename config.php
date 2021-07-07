@@ -1,7 +1,7 @@
 <?php
 
-define('USER', 'root');
-define('PASSWORD', '');
+define('USER', 'poker-user');
+define('PASSWORD', '<password>');
 define('HOST', 'localhost');
 define('DATABASE', 'poker');
 

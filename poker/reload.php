@@ -47,30 +47,48 @@ $game_players .=
 $game_players .= '<div class="cards">';
 
 $game_card_ids = [];
-
+/*
 if ($game['phase'] >= flop) for ($c = 1; $c <= 3; ++$c) {
-	$query_card = $db->prepare("SELECT `symbol`, `suit` FROM `cards` WHERE `id`=:card$c");
+	$query_card = $db->prepare("SELECT `front`, `back`, `suit` FROM `cards` WHERE `id`=:card$c");
 	$query_card->execute([ ":card$c" => $game["card$c"], ]);
 	$card = $query_card->fetch(PDO::FETCH_ASSOC);
-	$game_players .= '<span class="'.$card['suit'].'">'.$card['symbol'].'</span>';
+	$game_players .= '<span class="'.$card['suit'].'">'.$card['front'].'</span>';
 	$game_card_ids += [ ":game_card{$c}_id" => $game["card$c"], ];
 } else for ($c = 1; $c <= 3; ++$c) $game_players .= '<span>🂠</span>';
 		
 if ($game['phase']  >= turn) {
-	$query_card = $db->prepare("SELECT `symbol`, `suit` FROM `cards` WHERE `id`=:card4");
+	$query_card = $db->prepare("SELECT `front`, `back`, `suit` FROM `cards` WHERE `id`=:card4");
 	$query_card->execute([ ":card4" => $game["card4"], ]);
 	$card = $query_card->fetch(PDO::FETCH_ASSOC);
-	$game_players .= '<span class="'.$card['suit'].'">'.$card['symbol'].'</span>';
+	$game_players .= '<span class="'.$card['suit'].'">'.$card['front'].'</span>';
 	$game_card_ids += [ ":game_card4_id" => $game["card4"], ];
 } else $game_players .= '<span>🂠</span>';
 		
 if ($game['phase']  >= river) {
-	$query_card = $db->prepare("SELECT `symbol`, `suit` FROM `cards` WHERE `id`=:card5");
+	$query_card = $db->prepare("SELECT `front`, `back`, `suit` FROM `cards` WHERE `id`=:card5");
 	$query_card->execute([ ":card5" => $game["card5"], ]);
 	$card = $query_card->fetch(PDO::FETCH_ASSOC);
-	$game_players .= '<span class="'.$card['suit'].'">'.$card['symbol'].'</span>';
+	$game_players .= '<span class="'.$card['suit'].'">'.$card['front'].'</span>';
 	$game_card_ids += [ ":game_card5_id" => $game["card5"], ];
 } else $game_players .= '<span>🂠</span>';
+*/
+
+for ($c = 1; $c <= 5; ++$c) {
+	$query_card = $db->prepare("SELECT `front`, `back`, `suit` FROM `cards` WHERE `id`=:card");
+	$query_card->execute([ ":card" => $game["card$c"], ]);
+	$card = $query_card->fetch(PDO::FETCH_ASSOC);
+
+	if ($game['phase'] >= flop  && $c <= 3
+	 || $game['phase'] >= turn  && $c <= 4
+	 || $game['phase'] >= river && $c <= 5) {
+		$game_players .= '<span class="'.$card['suit'].'">'.$card['front'].'</span>';
+		$game_card_ids += [ ":game_card{$c}_id" => $game["card$c"], ];
+	}
+	else {
+		$game_players .= '<span>'.$card['back'].'</span>';
+	}
+}
+
 
 $game_players .= '</div></div>';
 
@@ -81,7 +99,7 @@ while ($pu = $query_players_users->fetch(PDO::FETCH_ASSOC)) {
 	];
 	$player_card_ids += $game_card_ids;
 
-	$query_player_cards = $db->prepare("SELECT `id`, `symbol`, `suit`, `rank` FROM `cards` WHERE `id`=:player_card1_id OR `id`=:player_card2_id"
+	$query_player_cards = $db->prepare("SELECT `id`, `front`, `suit`, `rank` FROM `cards` WHERE `id`=:player_card1_id OR `id`=:player_card2_id"
 		.($game['phase'] >= flop  ? " OR `id`=:game_card1_id OR `id`=:game_card2_id OR `id`=:game_card3_id" : "")
 		.($game['phase'] >= turn  ? " OR `id`=:game_card4_id" : "")
 		.($game['phase'] >= river ? " OR `id`=:game_card5_id" : ""));
@@ -130,8 +148,8 @@ while ($pu = $query_players_users->fetch(PDO::FETCH_ASSOC)) {
 		'</table></div><div class="cards">'.
 		($pu['id'] == $player_id && $game['phase'] >= preflop
 		|| $game['phase'] >= showdown && $pu['last_action'] != fold
-		? '<span class="'.$player_cards[0]['suit'].'">'.$player_cards[0]['symbol'].'</span>'.
-		  '<span class="'.$player_cards[1]['suit'].'">'.$player_cards[1]['symbol'].'</span>'
+		? '<span class="'.$player_cards[0]['suit'].'">'.$player_cards[0]['front'].'</span>'.
+		  '<span class="'.$player_cards[1]['suit'].'">'.$player_cards[1]['front'].'</span>'
 		: '<span>🂠</span><span>🂠</span>').
 		'</div><div class="player_right">'.
 		'<div class="player_dealer_button"><span>'.($is_dealer ? 'Ⓓ' : '').'</span></div>'.
